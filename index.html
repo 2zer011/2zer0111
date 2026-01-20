@@ -4,31 +4,159 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Điểm danh hàng ngày</title>
+  <title>Điểm danh Real-time (v3.0 - FIX)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* CSS nhúng thẳng vào HTML để đảm bảo luôn cập nhật */
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --primary: #38bdf8;
+      --danger: #f87171;
+      --text: #e2e8f0;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+    }
+
+    h1 {
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      font-size: 1.8rem;
+    }
+
+    .ver {
+      font-size: 0.7rem;
+      opacity: 0.5;
+      margin-bottom: 1rem;
+    }
+
+    .countdown {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      background: linear-gradient(to right, #fde047, #ca8a04);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 5px rgba(250, 204, 21, 0.3));
+    }
+
+    .input-group {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    input {
+      padding: 0.6rem;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: #fff;
+      width: 100%;
+    }
+
+    .btn {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 0.8rem 1.4rem;
+      font-size: 1rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin: 1rem 0;
+      font-size: 1.1rem;
+      min-height: 1.5rem;
+    }
+
+    .dead {
+      color: var(--danger);
+      font-weight: bold;
+    }
+
+    .leaderboard {
+      margin-top: 2rem;
+      text-align: left;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 0.6rem;
+      border-bottom: 1px solid #334155;
+    }
+
+    tr.me {
+      background: rgba(56, 189, 248, 0.15);
+    }
+
+    .debug-log {
+      font-size: 0.6rem;
+      color: #64748b;
+      text-align: left;
+      margin-top: 1rem;
+      max-height: 60px;
+      overflow: auto;
+      border-top: 1px solid #334155;
+      padding-top: 5px;
+    }
+  </style>
 </head>
 
 <body>
   <div class="container">
-    <h1>📅 Điểm danh Real-time</h1>
-    <div id="countdown" class="countdown"></div>
+    <h1>📅 Điểm danh</h1>
+    <div class="ver">Version 3.0 (Ultimate Fix)</div>
 
+    <div id="countdown" class="countdown">⏳ Đang tải...</div>
 
-    <!-- Nhập tên người dùng -->
-    <div class="input-name">
-      <input type="text" id="nameField" placeholder="Nhập tên của bạn..." />
-      <button id="saveNameBtn">Lưu tên</button>
+    <div class="input-group">
+      <input type="text" id="nameField" placeholder="Nhập tên chính xác của bạn..." />
+      <button id="saveNameBtn" class="btn" style="padding: 0.6rem 1rem;">Lưu</button>
     </div>
 
-    <div id="status" class="status"></div>
-    <button id="checkinBtn" class="btn" disabled>🟢 Điểm danh hôm nay</button>
+    <div id="status" class="status">🔄 Đang kết nối Firebase...</div>
 
-    <!-- Bảng xếp hạng -->
+    <button id="checkinBtn" class="btn" style="width: 100%; font-weight: bold;" disabled>🟢 Điểm danh ngay</button>
+
     <div class="leaderboard">
-      <h2>🏆 Bảng Xếp Hạng</h2>
+      <h3>🏆 Bảng Xếp Hạng</h3>
       <table>
         <thead>
           <tr>
@@ -40,17 +168,155 @@
         <tbody id="leaderBody"></tbody>
       </table>
     </div>
+
+    <div id="debug" class="debug-log"></div>
   </div>
 
-  <!-- Firebase SDK (Compat) -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
 
-  <!-- Config & Logic -->
-  <script src="firebase-config.js"></script>
-  <script src="script.js?v=2"></script>
+  <script>
+    const debugEl = document.getElementById('debug');
+    function log(m) {
+      console.log(m);
+      debugEl.innerHTML += `> ${m}<br>`;
+      debugEl.scrollTop = debugEl.scrollHeight;
+    }
 
+    log("🚀 Khởi động ứng dụng v3.0...");
+
+    // 1. Cấu hình Firebase trực tiếp
+    const firebaseConfig = {
+      apiKey: "AIzaSyDhgpbLOVXdQ5Q6UvkYYMPi66RFdZ4ogLc",
+      authDomain: "dielife-d5a74.firebaseapp.com",
+      projectId: "dielife-d5a74",
+      storageBucket: "dielife-d5a74.firebasestorage.app",
+      messagingSenderId: "654557385964",
+      appId: "1:654557385964:web:22f4debf14df0ae26e81c9"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Ép buộc kết nối bền bỉ nhất
+    db.settings({
+      experimentalForceLongPolling: true,
+      useFetchStreams: false
+    });
+    log("📡 Đã ép buộc chế độ Long-Polling.");
+
+    const usersCol = db.collection('users');
+    const statusEl = document.getElementById('status');
+    const btn = document.getElementById('checkinBtn');
+    const nameField = document.getElementById('nameField');
+    const saveNameBtn = document.getElementById('saveNameBtn');
+    const leaderBody = document.getElementById('leaderBody');
+
+    const USER_KEY = 'attendanceUsername';
+    let currentName = localStorage.getItem(USER_KEY) || '';
+
+    function formatDate(d) { return d.toISOString().split('T')[0]; }
+
+    async function refreshUI() {
+      if (!currentName) {
+        statusEl.textContent = "👋 Chào bạn! Hãy nhập tên để bắt đầu.";
+        btn.disabled = true;
+        return;
+      }
+      log(`🔄 Đang tải dữ liệu cho: ${currentName}`);
+      try {
+        const doc = await usersCol.doc(currentName).get();
+        const data = doc.data() || { checkins: [] };
+        const checkins = data.checkins;
+        const today = formatDate(new Date());
+
+        if (checkins.includes(today)) {
+          statusEl.innerHTML = "<span style='color:#4ade80'>✅ Bạn đã điểm danh hôm nay!</span>";
+          btn.disabled = true;
+          btn.textContent = "Đã điểm danh";
+        } else {
+          // Kiểm tra tử vong
+          const yesterday = formatDate(new Date(Date.now() - 86400000));
+          const dayBefore = formatDate(new Date(Date.now() - 172800000));
+          if (checkins.length > 0 && !checkins.includes(yesterday) && !checkins.includes(dayBefore)) {
+            statusEl.innerHTML = "<span class='dead'>💀 BẠN ĐÃ CHẾT (Bỏ qua 2 ngày)!</span>";
+            btn.disabled = true;
+          } else {
+            statusEl.textContent = "🔔 Sẵn sàng điểm danh.";
+            btn.disabled = false;
+            btn.textContent = "🟢 Điểm danh ngay";
+          }
+        }
+      } catch (e) {
+        log(`❌ Lỗi Firebase: ${e.message}`);
+        statusEl.innerHTML = "<span style='color:#f87171'>❌ Lỗi kết nối (Cần nhấn Publier trong Rules).</span>";
+      }
+    }
+
+    saveNameBtn.onclick = async () => {
+      const n = nameField.value.trim();
+      if (!n) return;
+      log(`💾 Đang lưu tên: ${n}`);
+      currentName = n;
+      localStorage.setItem(USER_KEY, n);
+      saveNameBtn.disabled = true;
+      try {
+        const doc = await usersCol.doc(n).get();
+        if (!doc.exists) await usersCol.doc(n).set({ checkins: [] });
+        nameField.value = "";
+        nameField.placeholder = "Tên: " + n;
+        await refreshUI();
+      } catch (e) { log(`❌ Lỗi lưu tên: ${e.message}`); }
+      saveNameBtn.disabled = false;
+    };
+
+    btn.onclick = async () => {
+      btn.disabled = true;
+      btn.textContent = "Đang ghi...";
+      log("📝 Đang ghi điểm danh...");
+      try {
+        const docRef = usersCol.doc(currentName);
+        const snap = await docRef.get();
+        const data = snap.data() || { checkins: [] };
+        const today = formatDate(new Date());
+        if (!data.checkins.includes(today)) {
+          data.checkins.push(today);
+          await docRef.update({ checkins: data.checkins });
+          log("✅ Điểm danh thành công!");
+        }
+        await refreshUI();
+      } catch (e) { log(`❌ Lỗi điểm danh: ${e.message}`); }
+    };
+
+    // Lắng nghe bảng xếp hạng
+    usersCol.onSnapshot(snap => {
+      log("📥 Bảng xếp hạng cập nhật!");
+      const list = [];
+      snap.forEach(d => list.push({ name: d.id, count: (d.data().checkins || []).length }));
+      list.sort((a, b) => b.count - a.count);
+      leaderBody.innerHTML = list.map((id, i) => `
+        <tr class="${id.name === currentName ? 'me' : ''}">
+          <td>${i + 1}</td><td>${id.name}</td><td>${id.count}</td>
+        </tr>
+      `).join('');
+    }, err => log(`🔥 Lỗi realtime: ${err.message}`));
+
+    // Đồng hồ
+    setInterval(() => {
+      const diff = new Date().setHours(24, 0, 0, 0) - new Date();
+      const h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
+      document.getElementById('countdown').textContent = `⏳ Hết hạn: ${h}h ${m}m ${s}s`;
+    }, 1000);
+
+    // Khởi tạo
+    if (currentName) {
+      nameField.placeholder = "Tên: " + currentName;
+      refreshUI();
+    } else {
+      statusEl.textContent = "👋 Chào bạn! Hãy nhập tên để bắt đầu.";
+    }
+  </script>
 </body>
 
 </html>
