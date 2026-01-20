@@ -4,10 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Điểm danh v3.8 - BẢN KHÔNG MẤT DỮ LIỆU</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <title>Điểm danh v3.9 - SIÊU KẾT NỐI</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -39,14 +36,12 @@
       text-align: center;
       max-width: 450px;
       width: 100%;
-      border: 1px solid rgba(56, 189, 248, 0.1);
     }
 
     h1 {
       color: var(--primary);
       margin: 0.5rem 0;
       font-size: 1.8rem;
-      letter-spacing: -1px;
     }
 
     .ver {
@@ -55,18 +50,13 @@
       font-weight: bold;
       margin-bottom: 1.5rem;
       display: block;
-      opacity: 0.8;
     }
 
     .countdown {
       font-size: 1.1rem;
       font-weight: 600;
       margin-bottom: 1.5rem;
-      padding: 12px;
-      background: rgba(15, 23, 42, 0.6);
-      border-radius: 10px;
       color: #fde047;
-      border: 1px solid rgba(253, 224, 71, 0.1);
     }
 
     .input-group {
@@ -84,12 +74,6 @@
       color: #fff;
       width: 100%;
       outline: none;
-      transition: 0.2s;
-    }
-
-    input:focus {
-      border-color: var(--primary);
-      background: #1e293b;
     }
 
     .btn {
@@ -104,11 +88,6 @@
       font-weight: bold;
     }
 
-    .btn:hover:not(:disabled) {
-      transform: scale(1.02);
-      filter: brightness(1.1);
-    }
-
     .btn:disabled {
       opacity: 0.3;
       cursor: not-allowed;
@@ -120,7 +99,6 @@
       padding: 15px;
       border-radius: 10px;
       background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .leaderboard {
@@ -131,14 +109,6 @@
     table {
       width: 100%;
       border-collapse: collapse;
-    }
-
-    th {
-      text-align: left;
-      opacity: 0.5;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      padding: 0 5px 10px 5px;
     }
 
     td {
@@ -161,121 +131,59 @@
     .chat-box {
       background: #0b1120;
       border-radius: 12px;
-      height: 200px;
+      height: 180px;
       overflow-y: auto;
       padding: 15px;
       margin-bottom: 12px;
       text-align: left;
       border: 1px solid #334155;
-      display: flex;
-      flex-direction: column-reverse;
-      /* Đảo ngược để tin mới ở dưới */
     }
 
     .msg {
-      margin-bottom: 10px;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(5px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      margin-bottom: 8px;
+      font-size: 0.85rem;
     }
 
     .msg-user {
       font-weight: bold;
       color: var(--primary);
-      font-size: 0.85rem;
-    }
-
-    .msg-text {
-      color: #f1f5f9;
-      margin-left: 6px;
-      font-size: 0.85rem;
-    }
-
-    .footer-btns {
-      margin-top: 20px;
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-    }
-
-    .btn-ghost {
-      background: none;
-      border: none;
-      color: var(--danger);
-      font-size: 0.7rem;
-      cursor: pointer;
-      opacity: 0.6;
-    }
-
-    .btn-ghost:hover {
-      opacity: 1;
-      text-decoration: underline;
     }
   </style>
 </head>
 
 <body>
   <div class="container">
-    <h1>📅 Điểm danh v3.8</h1>
-    <span class="ver">✅ BẢN CHỐNG MẤT DỮ LIỆU (FIXED)</span>
+    <h1>📅 Điểm danh v3.9</h1>
+    <span class="ver">✅ SIÊU KẾT NỐI (KHÔNG CẦN CHỜ MẠNG)</span>
 
-    <div id="countdown" class="countdown">⏳ Đang đồng bộ thời gian...</div>
+    <div id="countdown" class="countdown">⏳ ...</div>
 
     <div class="input-group">
-      <input type="text" id="nameField" placeholder="Nhập tên của bạn..." />
+      <input type="text" id="nameField" placeholder="Tên của bạn..." />
       <button id="saveBtn" class="btn">Lưu</button>
     </div>
 
-    <div id="status" class="status">Đang tải dữ liệu từ server...</div>
-    <button id="checkinBtn" class="btn" style="width: 100%; height: 55px; font-size: 1.1rem;" disabled>🟢 ĐIỂM DANH
-      NGAY</button>
+    <div id="status" class="status">Đang tải dữ liệu...</div>
+    <button id="checkinBtn" class="btn" style="width: 100%; height: 55px;" disabled>🟢 ĐIỂM DANH NGAY</button>
 
     <div class="leaderboard">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <h3>🏆 Bảng xếp hạng</h3>
-        <span id="syncStatus" style="font-size:0.6rem; opacity:0.5;">📡 Đang đồng bộ...</span>
-      </div>
+      <h3>🏆 Bảng xếp hạng</h3>
       <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Tên</th>
-            <th>Số ngày</th>
-          </tr>
-        </thead>
         <tbody id="leaderBody"></tbody>
       </table>
     </div>
 
     <div id="chatSection" class="chat-section">
-      <div
-        style="text-align:left; color: var(--primary); font-weight:bold; margin-bottom:10px; display:flex; align-items:center; gap:5px;">
-        <span>💬 Trò chuyện</span>
-        <span style="font-size:0.6rem; font-weight:normal; opacity:0.6;">(Đã mở khóa)</span>
-      </div>
+      <div style="text-align:left; color: var(--primary); font-weight:bold; margin-bottom:10px;">💬 Chat</div>
       <div id="chatBox" class="chat-box"></div>
       <div class="input-group">
         <input type="text" id="chatInput" placeholder="Nhắn tin..." />
         <button id="sendBtn" class="btn">Gửi</button>
       </div>
     </div>
-
-    <div class="footer-btns">
-      <button class="btn-ghost" onclick="location.reload()">🔄 Tải lại trang</button>
-      <button class="btn-ghost"
-        onclick="if(confirm('Xóa sạch và đăng nhập tên mới?')){localStorage.clear(); location.reload();}">🗑️ Đổi tên
-        khác</button>
-    </div>
+    <button onclick="localStorage.clear(); location.reload();"
+      style="margin-top:20px; background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.7rem;">XÓA
+      TÊN & RESET</button>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -292,122 +200,98 @@
     };
     firebase.initializeApp(config);
     const db = firebase.firestore();
-    db.settings({ experimentalForceLongPolling: true });
+
+    // Cấu hình SIÊU KẾT NỐI (v3.9)
+    db.settings({
+      experimentalForceLongPolling: true,
+      useFetchStreams: false
+    });
 
     const USER_KEY = 'attendanceUsername';
     let myName = localStorage.getItem(USER_KEY) || '';
     let hasCheckin = false;
-    let globalUsers = {};
 
-    const nameField = document.getElementById('nameField');
-    const statusEl = document.getElementById('status');
-    const checkinBtn = document.getElementById('checkinBtn');
-    const chatSection = document.getElementById('chatSection');
-    const syncStatus = document.getElementById('syncStatus');
-
-    if (myName) nameField.value = myName;
-
-    // QUY TẮC VÀNG: BXH là nguồn sự thật duy nhất
+    // Listeners (Mọi thứ chạy Real-time)
     db.collection('users').onSnapshot(snap => {
-      syncStatus.textContent = "📡 Đã đồng bộ";
       const list = [];
       const today = new Date().toISOString().split('T')[0];
-      globalUsers = {};
-
       snap.forEach(d => {
-        const data = d.data();
-        globalUsers[d.id] = data;
+        const data = d.data() || { checkins: [] };
         list.push({ name: d.id, count: (data.checkins || []).length });
         if (d.id === myName) {
           hasCheckin = (data.checkins || []).includes(today);
         }
       });
       list.sort((a, b) => b.count - a.count);
-      renderLeaderboard(list);
-      updateUI();
-    });
-
-    db.collection('messages').orderBy('time', 'desc').limit(50).onSnapshot(snap => {
-      const msgs = [];
-      snap.forEach(d => msgs.push(d.data()));
-      document.getElementById('chatBox').innerHTML = msgs.map(m => `
-        <div class="msg">
-          <span class="msg-user">${m.user}:</span><span class="msg-text">${m.text}</span>
-        </div>
-      `).join('');
-    });
-
-    function renderLeaderboard(list) {
       document.getElementById('leaderBody').innerHTML = list.map((u, i) => `
         <tr class="${u.name === myName ? 'me' : ''}"><td>${i + 1}</td><td>${u.name}</td><td>${u.count}</td></tr>
       `).join('');
-    }
+      updateUI();
+    }, err => {
+      console.log("❌ Lỗi Firebase:", err.message);
+      document.getElementById('status').innerHTML = "<span style='color:var(--danger)'>Mạng yếu, đang thử lại...</span>";
+    });
+
+    db.collection('messages').orderBy('time', 'desc').limit(30).onSnapshot(snap => {
+      const msgs = [];
+      snap.forEach(d => msgs.push(d.data()));
+      document.getElementById('chatBox').innerHTML = msgs.map(m => `
+        <div class="msg"><span class="msg-user">${m.user}:</span><span> ${m.text}</span></div>
+      `).join('');
+    });
 
     function updateUI() {
-      if (!myName) {
-        statusEl.textContent = "👋 Vui lòng nhập tên của bạn.";
-        checkinBtn.disabled = true;
-        chatSection.style.display = "none";
-        return;
-      }
+      const field = document.getElementById('nameField');
+      if (myName) field.value = myName;
 
-      if (hasCheckin) {
-        statusEl.innerHTML = "<span style='color:var(--success); font-weight:bold;'>✅ ĐÃ ĐIỂM DANH HÔM NAY!</span>";
-        checkinBtn.disabled = true;
-        checkinBtn.textContent = "HẸN GẶP LẠI VÀO MAI";
-        chatSection.style.display = "block";
+      const btn = document.getElementById('checkinBtn');
+      const st = document.getElementById('status');
+      const chat = document.getElementById('chatSection');
+
+      if (!myName) {
+        st.textContent = "👋 Vui lòng nhập tên.";
+        btn.disabled = true;
+        chat.style.display = "none";
+      } else if (hasCheckin) {
+        st.innerHTML = "<span style='color:var(--success)'>✅ Đã điểm danh thành công!</span>";
+        btn.disabled = true; btn.textContent = "NHẬN DIỆN THÀNH CÔNG";
+        chat.style.display = "block";
       } else {
-        statusEl.innerHTML = "🔔 Sẵn sàng điểm danh cho <b>" + myName + "</b>";
-        checkinBtn.disabled = false;
-        checkinBtn.textContent = "🟢 ĐIỂM DANH NGAY";
-        chatSection.style.display = "none";
+        st.innerHTML = "🔔 Đã sẵn sàng cho: <b>" + myName + "</b>";
+        btn.disabled = false; btn.textContent = "🟢 ĐIỂM DANH NGAY";
+        chat.style.display = "none";
       }
     }
 
-    // LƯU TÊN (KHÔNG LÀM MẤT DỮ LIỆU)
-    document.getElementById('saveBtn').onclick = async () => {
-      const n = nameField.value.trim();
+    // LƯU TÊN (KHÔNG CHỜ PHẢN HỒI MẠNG - OPTIMISTIC - v3.9)
+    document.getElementById('saveBtn').onclick = () => {
+      const n = document.getElementById('nameField').value.trim();
       if (!n) return;
-
-      statusEl.textContent = "⏳ Đang kiểm tra tên...";
       myName = n;
       localStorage.setItem(USER_KEY, n);
 
-      try {
-        const ref = db.collection('users').doc(n);
-        const doc = await ref.get();
-        if (!doc.exists) {
-          // CHỈ TẠO MỚI NẾU CHƯA CÓ TRÊN SERVER
-          await ref.set({ checkins: [] });
-          log("🆕 Đã tạo tài khoản mới.");
-        } else {
-          log("👤 Đã nhận diện được tài khoản cũ.");
-        }
-        updateUI();
-      } catch (e) {
-        alert("Lỗi: " + e.message);
-      }
+      // Gửi lệnh set nhưng không dùng 'await' để không bị kẹt nếu mạng yếu
+      db.collection('users').doc(n).set({}, { merge: true });
+      updateUI();
+      log("💾 Đã ghi nhớ tên: " + n);
     };
 
-    checkinBtn.onclick = async () => {
-      if (!myName || checkinBtn.disabled) return;
-      checkinBtn.disabled = true;
-      checkinBtn.textContent = "⏳ Đang ghi...";
+    // ĐIỂM DANH (DÙNG arrayUnion - KHÔNG CẦN ĐỌC DỮ LIỆU - v3.9)
+    document.getElementById('checkinBtn').onclick = () => {
+      if (!myName) return;
+      const btn = document.getElementById('checkinBtn');
+      btn.disabled = true; btn.textContent = "⏳ ĐANG GỬI...";
 
-      try {
-        const today = new Date().toISOString().split('T')[0];
-        const ref = db.collection('users').doc(myName);
-        const snap = await ref.get();
-        const data = snap.data() || { checkins: [] };
-
-        if (!data.checkins.includes(today)) {
-          data.checkins.push(today);
-          await ref.set({ checkins: data.checkins }, { merge: true });
-        }
-      } catch (e) {
-        alert("Lỗi: " + e.message);
-        checkinBtn.disabled = false;
-      }
+      const today = new Date().toISOString().split('T')[0];
+      // arrayUnion cho phép ghi dữ liệu mà không cần đọc (get) trước, giúp tránh lỗi offline
+      db.collection('users').doc(myName).update({
+        checkins: firebase.firestore.FieldValue.arrayUnion(today)
+      }).then(() => {
+        log("✅ Gửi thành công!");
+      }).catch(e => {
+        console.log("⚠️ Gửi chậm, đang chờ mạng...", e.message);
+        // Ngay cả khi lỗi, Firestore sẽ tự động gửi lại khi có mạng
+      });
     };
 
     async function sendChat() {
@@ -415,13 +299,9 @@
       const text = input.value.trim();
       if (!text || !myName || !hasCheckin) return;
       input.value = "";
-      try {
-        await db.collection('messages').add({
-          user: myName,
-          text: text,
-          time: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      } catch (e) { }
+      db.collection('messages').add({
+        user: myName, text, time: firebase.firestore.FieldValue.serverTimestamp()
+      });
     }
 
     document.getElementById('sendBtn').onclick = sendChat;
@@ -429,10 +309,13 @@
 
     setInterval(() => {
       const diff = new Date().setHours(24, 0, 0, 0) - new Date();
-      if (diff < 0) return location.reload();
+      if (diff < 0) location.reload();
       const h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
       document.getElementById('countdown').textContent = `⏳ Hết hạn: ${h}h ${m}m ${s}s`;
     }, 1000);
+
+    function log(m) { console.log(m); }
+    updateUI();
   </script>
 </body>
 
