@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Điểm danh v5.0 - CHỐT HẠ KẾT NỐI</title>
+  <title>Điểm danh v5.1 - KIỂM TRA SÂU</title>
   <style>
     :root {
       --bg: #0b0f1a;
@@ -34,7 +34,7 @@
       border-radius: var(--radius);
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
       text-align: center;
-      max-width: 450px;
+      max-width: 480px;
       width: 100%;
     }
 
@@ -46,34 +46,19 @@
 
     .ver {
       font-size: 0.7rem;
-      color: var(--success);
+      color: #fde047;
       font-weight: bold;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
       display: block;
     }
 
-    .countdown {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 20px;
-      color: #fde047;
-    }
-
-    .input-group {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin-bottom: 1rem;
-    }
-
-    input {
-      padding: 1rem;
-      border-radius: 10px;
-      border: 2px solid #334155;
-      background: #0f172a;
-      color: #fff;
-      width: 100%;
-      outline: none;
+    .status {
+      margin: 15px 0;
+      font-size: 0.9rem;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid #334155;
     }
 
     .btn {
@@ -91,23 +76,19 @@
       cursor: not-allowed;
     }
 
-    .status {
-      margin: 15px 0;
-      font-size: 0.9rem;
-      padding: 10px;
-      border-radius: 8px;
-      background: rgba(0, 0, 0, 0.3);
-    }
-
+    /* BXH */
     .leaderboard {
       margin-top: 20px;
       text-align: left;
+      background: #0b1120;
+      padding: 10px;
+      border-radius: 10px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
 
     td {
@@ -115,110 +96,95 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    tr.me {
-      background: rgba(56, 189, 248, 0.1);
-      border-left: 3px solid var(--primary);
-    }
-
-    .chat-section {
-      margin-top: 20px;
-      border-top: 1px solid #334155;
-      padding-top: 15px;
-      display: none;
-    }
-
-    .chat-box {
-      background: #0b1120;
+    /* DIAGNOSTIC HUB */
+    .diag-hub {
+      margin-top: 25px;
+      border: 1px solid #38bdf8;
       border-radius: 10px;
-      height: 150px;
-      overflow-y: auto;
       padding: 10px;
-      margin-bottom: 10px;
       text-align: left;
+      background: #000;
     }
 
-    .msg {
+    .diag-title {
+      font-size: 0.75rem;
+      color: #38bdf8;
       margin-bottom: 5px;
-      font-size: 0.8rem;
-    }
-
-    .msg-u {
       font-weight: bold;
-      color: var(--primary);
     }
 
     .diag-log {
-      font-size: 0.6rem;
-      color: #64748b;
-      text-align: left;
-      margin-top: 15px;
-      max-height: 100px;
+      font-size: 0.65rem;
+      color: #94a3b8;
+      height: 120px;
       overflow-y: auto;
-      border: 1px dashed #334155;
-      padding: 5px;
-      word-break: break-all;
+      font-family: monospace;
+    }
+
+    .config-check {
+      font-size: 0.6rem;
+      color: #4ade80;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #334155;
     }
   </style>
 </head>
 
 <body>
   <div class="container">
-    <h1>📅 Điểm danh v5.0</h1>
-    <span class="ver">⭐ BẢN CHỐT HẠ KẾT NỐI (FORCE SYNC) ⭐</span>
+    <h1>📅 Điểm danh v5.1</h1>
+    <span class="ver">🔍 BẢN KIỂM TRA LỖI TOÀN DIỆN</span>
 
-    <div id="countdown" class="countdown">⏳ ...</div>
+    <div class="status" id="status">Đang tải cấu hình kết nối...</div>
 
-    <div class="input-group">
-      <input type="text" id="nameField" placeholder="Nhập tên của bạn..." />
-      <button id="saveBtn" class="btn">Lưu tên</button>
+    <div class="input-group" style="display:flex; gap:5px; margin-bottom:10px;">
+      <input type="text" id="nameField" placeholder="Nhập tên..."
+        style="flex:1; padding:10px; background:#0f172a; border:1px solid #334155; color:white; border-radius:8px;" />
+      <button id="saveBtn" class="btn">Lưu</button>
     </div>
 
-    <div id="status" class="status">Đang khởi tạo kết nối v5.0...</div>
-    <button id="checkinBtn" class="btn" style="width: 100%; font-size: 1.1rem; height: 50px;" disabled>🟢 ĐIỂM DANH
-      NGAY</button>
+    <button id="checkinBtn" class="btn" style="width: 100%; height: 50px;" disabled>🟢 ĐIỂM DANH THỬ</button>
 
     <div class="leaderboard">
-      <h3 style="margin-bottom:5px;">🏆 Bảng xếp hạng</h3>
+      <h3 style="margin:0 0 10px 0; font-size:1rem; color:var(--primary);">🏆 Bảng xếp hạng</h3>
       <table>
         <tbody id="leaderBody"></tbody>
       </table>
     </div>
 
-    <div id="chatSection" class="chat-section">
-      <div style="font-weight:bold; color:var(--primary); margin-bottom:8px;">💬 Chat Nhóm</div>
-      <div id="chatBox" class="chat-box"></div>
-      <div class="input-group">
-        <input type="text" id="chatInput" placeholder="Nhắn gì đó..." />
-        <button id="sendBtn" class="btn">Gửi</button>
+    <!-- CÔNG CỤ CHẨN ĐOÁN -->
+    <div class="diag-hub">
+      <div class="diag-title">�️ TRUNG TÂM CHẨN ĐOÁN LỖI</div>
+      <div id="diagLog" class="diag-log"></div>
+
+      <div id="configInfo" class="config-check">
+        <b>Dự án:</b> dielife-d5a74<br>
+        <b>API Key:</b> AIzaSy...ogLc
       </div>
     </div>
 
-    <div id="diag" class="diag-log"></div>
-
     <div style="margin-top: 10px; display: flex; gap: 5px; justify-content: center;">
+      <button id="testBtn"
+        style="font-size: 0.7rem; background:#22c55e; color:black; border:none; padding:8px; border-radius:5px; cursor:pointer; font-weight:bold;">⚡
+        TEST KẾT NỐI NGAY</button>
       <button onclick="location.reload(true)"
-        style="font-size: 0.6rem; background:#334155; color:white; border:none; padding:5px; border-radius:4px; cursor:pointer;">🔄
-        Ép tải lại</button>
-      <button onclick="localStorage.clear(); location.reload(true)"
-        style="font-size: 0.6rem; background:#ef4444; color:white; border:none; padding:5px; border-radius:4px; cursor:pointer;">🗑️
-        Reset dữ liệu</button>
+        style="font-size: 0.7rem; background:#334155; color:white; border:none; padding:8px; border-radius:5px;">� Tải
+        lại trang</button>
     </div>
   </div>
 
-  <!-- Dùng Version 10.12.2 Compat - Bộ SDK mạnh nhất hiện tại -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
   <script>
-    const diag = document.getElementById('diag');
+    const diagLog = document.getElementById('diagLog');
     function log(m, type = "info") {
-      const time = new Date().toLocaleTimeString();
-      const color = type === "error" ? "#ef4444" : type === "success" ? "#22c55e" : "#64748b";
-      diag.innerHTML += `<div style="color:${color}">[${time}] ${m}</div>`;
-      diag.scrollTop = diag.scrollHeight;
+      const color = type === "err" ? "#ef4444" : type === "ok" ? "#22c55e" : "#94a3b8";
+      diagLog.innerHTML += `<div style="color:${color}">> ${m}</div>`;
+      diagLog.scrollTop = diagLog.scrollHeight;
+      console.log(m);
     }
-
-    log("🚀 Đang khởi động v5.0...");
 
     const firebaseConfig = {
       apiKey: "AIzaSyDhgpbLOVXdQ5Q6UvkYYMPi66RFdZ4ogLc",
@@ -229,133 +195,74 @@
       appId: "1:654557385964:web:22f4debf14df0ae26e81c9"
     };
 
-    try {
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.firestore();
+    log("🔌 Đang khởi tạo Firebase v5.1...");
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
 
-      // THUẬT TOÁN KẾT NỐI MẠNH (FORCE LONG POLLING)
-      db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
-      log("📡 Đã ép kiểu kết nối Long-Polling.");
-
-      const USER_KEY = 'attendanceUsername';
-      let myName = localStorage.getItem(USER_KEY) || '';
-      let hasCheckin = false;
-
-      const nameField = document.getElementById('nameField');
-      const statusEl = document.getElementById('status');
-      const checkinBtn = document.getElementById('checkinBtn');
-      const chatSection = document.getElementById('chatSection');
-
-      if (myName) {
-        nameField.value = myName;
-        log("👤 Tìm thấy tên cũ: " + myName);
-      }
-
-      // LẮNG NGHE REAL-TIME (CÁI NÀY SẼ CHẠY KHI CÓ MẠNG)
-      db.collection('users').onSnapshot(snap => {
-        log("📥 Dữ liệu đồng bộ thành công!", "success");
-        const list = [];
-        const today = new Date().toISOString().split('T')[0];
-        snap.forEach(d => {
-          const data = d.data();
-          list.push({ n: d.id, c: (data.checkins || []).length });
-          if (d.id === myName) {
-            hasCheckin = (data.checkins || []).includes(today);
-          }
-        });
-        list.sort((a, b) => b.c - a.c);
-        document.getElementById('leaderBody').innerHTML = list.map((u, i) => `
-          <tr class="${u.n === myName ? 'me' : ''}"><td>${i + 1}</td><td>${u.n}</td><td>${u.c}</td></tr>
-        `).join('');
-        updateUI();
-      }, err => {
-        log("❌ Lỗi Backend: " + err.message, "error");
-        if (err.message.includes("does not exist")) {
-          log("⚠️ LƯU Ý: Nếu lỗi 'does not exist', hãy kiểm tra xem bạn đã nhấn 'Tạo Database' trên Firebase chưa!", "error");
-        }
-      });
-
-      db.collection('messages').orderBy('time', 'desc').limit(30).onSnapshot(snap => {
-        const msgs = [];
-        snap.forEach(d => msgs.push(d.data()));
-        document.getElementById('chatBox').innerHTML = msgs.map(m => `
-          <div class="msg"><span class="msg-u">${m.user}:</span><span> ${m.text}</span></div>
-        `).join('');
-      });
-
-      function updateUI() {
-        if (!myName) {
-          statusEl.textContent = "👋 Vui lòng nhập tên.";
-          checkinBtn.disabled = true;
-          chatSection.style.display = "none";
-        } else if (hasCheckin) {
-          statusEl.innerHTML = "<span style='color:var(--success); font-weight:bold;'>✅ ĐÃ ĐIỂM DANH!</span>";
-          checkinBtn.disabled = true;
-          checkinBtn.textContent = "HẸN GẶP LẠI";
-          chatSection.style.display = "block";
-        } else {
-          statusEl.innerHTML = "🔔 " + myName + " ơi, điểm danh thôi!";
-          checkinBtn.disabled = false;
-          checkinBtn.textContent = "🟢 ĐIỂM DANH NGAY";
-          chatSection.style.display = "none";
-        }
-      }
-
-      document.getElementById('saveBtn').onclick = () => {
-        const n = nameField.value.trim();
-        if (!n) return;
-        myName = n;
-        localStorage.setItem(USER_KEY, n);
-        log("💾 Đang ghi nhớ tên: " + n);
-        // Ghi lên server để báo danh
-        db.collection('users').doc(n).set({}, { merge: true }).then(() => log("✅ Đã ghi danh lên server."));
-        updateUI();
-      };
-
-      checkinBtn.onclick = () => {
-        if (!myName) return;
-        checkinBtn.disabled = true;
-        checkinBtn.textContent = "⏳ ĐANG GỬI...";
-        const t = new Date().toISOString().split('T')[0];
-        log("📝 Đang gửi điểm danh...");
-
-        // Gửi arrayUnion - Cách an toàn nhất
-        db.collection('users').doc(myName).set({
-          checkins: firebase.firestore.FieldValue.arrayUnion(t)
-        }, { merge: true }).then(() => {
-          log("✅ ĐIỂM DANH THÀNH CÔNG!", "success");
-        }).catch(e => {
-          log("⚠️ Gửi chậm... Đang thử lại âm thầm.", "error");
-        });
-
-        // Optimistic UI
-        hasCheckin = true;
-        updateUI();
-      };
-
-      async function sendChat() {
-        const i = document.getElementById('chatInput');
-        const text = i.value.trim();
-        if (!text || !myName || !hasCheckin) return;
-        i.value = "";
-        db.collection('messages').add({
-          user: myName, text, time: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      }
-      document.getElementById('sendBtn').onclick = sendChat;
-      document.getElementById('chatInput').onkeypress = (e) => { if (e.key === 'Enter') sendChat(); };
-
-      setInterval(() => {
-        const diff = new Date().setHours(24, 0, 0, 0) - new Date();
-        if (diff < 0) location.reload();
-        const h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
-        document.getElementById('countdown').textContent = `⏳ Hết hạn: ${h}h ${m}m ${s}s`;
-      }, 1000);
-
-      updateUI();
-    } catch (e) {
-      log("🔥 LỖI KHỞI TẠO: " + e.message, "error");
+    let myName = localStorage.getItem('attendanceUsername') || '';
+    if (myName) {
+      document.getElementById('nameField').value = myName;
+      document.getElementById('status').textContent = "🔔 Chào " + myName;
     }
+
+    // BUTTON TEST KẾT NỐI
+    document.getElementById('testBtn').onclick = async () => {
+      log("⚡ Bắt đầu Test Kết Nối...");
+      try {
+        const testRef = db.collection('_test_connection').doc('status');
+        await testRef.set({ time: new Date().toISOString() });
+        log("✅ KẾT NỐI THÀNH CÔNG! Database đang hoạt động.", "ok");
+      } catch (e) {
+        log("❌ LỖI KẾT NỐI: " + e.message, "err");
+        if (e.message.includes("does not exist")) {
+          log("👉 Giải pháp: Bạn hãy vào Firebase Console, mục Firestore Database, nhấn nút 'Tạo Database' (Create Database) và chọn 'Native Mode'.", "err");
+        } else if (e.message.includes("permission-denied")) {
+          log("👉 Giải pháp: Bạn hãy vào tab 'Rules' (Sửa lỗi bảo mật) trong Firebase và chỉnh thành 'allow read, write: if true;'.", "err");
+        }
+      }
+    };
+
+    // LẮNG NGHE BXH
+    db.collection('users').limit(20).onSnapshot(snap => {
+      log("📥 Đã tải dữ liệu BXH.", "ok");
+      const list = [];
+      snap.forEach(d => list.push({ n: d.id, c: (d.data().checkins || []).length }));
+      list.sort((a, b) => b.c - a.c);
+      document.getElementById('leaderBody').innerHTML = list.map((u, i) => `
+        <tr><td>${i + 1}</td><td>${u.n}</td><td>${u.c} ngày</td></tr>
+      `).join('');
+      document.getElementById('checkinBtn').disabled = !myName;
+    }, err => {
+      log("❌ Lỗi Real-time: " + err.message, "err");
+    });
+
+    document.getElementById('saveBtn').onclick = () => {
+      const n = document.getElementById('nameField').value.trim();
+      if (!n) return;
+      localStorage.setItem('attendanceUsername', n);
+      myName = n;
+      log("💾 Đã lưu tên: " + n);
+      db.collection('users').doc(n).set({}, { merge: true });
+      document.getElementById('checkinBtn').disabled = false;
+      document.getElementById('status').textContent = "🔔 Chào " + n;
+    };
+
+    document.getElementById('checkinBtn').onclick = async () => {
+      if (!myName) return;
+      log("⏳ Đang gửi điểm danh...");
+      const t = new Date().toISOString().split('T')[0];
+      try {
+        await db.collection('users').doc(myName).set({
+          checkins: firebase.firestore.FieldValue.arrayUnion(t)
+        }, { merge: true });
+        log("✅ Đã điểm danh thành công!", "ok");
+      } catch (e) {
+        log("❌ Lỗi điểm danh: " + e.message, "err");
+      }
+    };
+
+    log("🏁 Đã sẵn sàng. Bạn hãy nhấn nút 'TEST KẾT NỐI' màu xanh để kiểm tra.");
   </script>
 </body>
 
