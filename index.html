@@ -4,15 +4,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Điểm danh v3.9 - SIÊU KẾT NỐI</title>
+  <title>Điểm danh v4.0 - BẢN TỐI THƯỢNG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
+      --bg: #0b0f1a;
+      --card-bg: #161c2d;
       --primary: #38bdf8;
-      --danger: #f87171;
-      --success: #4ade80;
-      --text: #e2e8f0;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --text: #f1f5f9;
       --radius: 12px;
     }
 
@@ -30,33 +33,39 @@
 
     .container {
       background: var(--card-bg);
-      padding: 1.5rem;
+      padding: 2rem;
       border-radius: var(--radius);
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
       text-align: center;
       max-width: 450px;
       width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     h1 {
       color: var(--primary);
-      margin: 0.5rem 0;
+      margin: 0;
       font-size: 1.8rem;
+      letter-spacing: -1px;
     }
 
     .ver {
       font-size: 0.75rem;
       color: var(--success);
       font-weight: bold;
-      margin-bottom: 1.5rem;
+      margin-bottom: 20px;
       display: block;
     }
 
     .countdown {
       font-size: 1.1rem;
       font-weight: 600;
-      margin-bottom: 1.5rem;
+      margin-bottom: 20px;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 10px;
       color: #fde047;
+      border: 1px solid rgba(253, 224, 71, 0.2);
     }
 
     .input-group {
@@ -67,42 +76,45 @@
     }
 
     input {
-      padding: 0.85rem;
+      padding: 1rem;
       border-radius: 10px;
       border: 2px solid #334155;
       background: #0f172a;
       color: #fff;
       width: 100%;
       outline: none;
+      transition: 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--primary);
     }
 
     .btn {
       background: var(--primary);
       color: #fff;
       border: none;
-      padding: 0.8rem 1.4rem;
+      padding: 1rem 1.5rem;
       font-size: 1rem;
       border-radius: 10px;
       cursor: pointer;
-      transition: 0.3s;
+      transition: 0.2s;
       font-weight: bold;
     }
 
     .btn:disabled {
-      opacity: 0.3;
+      opacity: 0.4;
       cursor: not-allowed;
     }
 
     .status {
-      margin: 1rem 0;
+      margin: 15px 0;
       font-size: 1rem;
-      padding: 15px;
-      border-radius: 10px;
-      background: rgba(0, 0, 0, 0.3);
+      height: 1.5rem;
     }
 
     .leaderboard {
-      margin-top: 2rem;
+      margin-top: 25px;
       text-align: left;
     }
 
@@ -111,20 +123,28 @@
       border-collapse: collapse;
     }
 
+    th {
+      text-align: left;
+      opacity: 0.4;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      padding-bottom: 10px;
+    }
+
     td {
-      padding: 12px 10px;
-      border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+      padding: 12px 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     tr.me {
-      background: rgba(56, 189, 248, 0.15);
       border-left: 4px solid var(--primary);
+      background: rgba(56, 189, 248, 0.1);
     }
 
     .chat-section {
-      margin-top: 2.5rem;
+      margin-top: 30px;
       border-top: 2px solid #334155;
-      padding-top: 1.5rem;
+      padding-top: 20px;
       display: none;
     }
 
@@ -137,6 +157,8 @@
       margin-bottom: 12px;
       text-align: left;
       border: 1px solid #334155;
+      display: flex;
+      flex-direction: column-reverse;
     }
 
     .msg {
@@ -144,53 +166,72 @@
       font-size: 0.85rem;
     }
 
-    .msg-user {
+    .msg-u {
       font-weight: bold;
       color: var(--primary);
+    }
+
+    .net-label {
+      font-size: 0.65rem;
+      opacity: 0.5;
+      margin-top: 20px;
+      display: block;
     }
   </style>
 </head>
 
 <body>
   <div class="container">
-    <h1>📅 Điểm danh v3.9</h1>
-    <span class="ver">✅ SIÊU KẾT NỐI (KHÔNG CẦN CHỜ MẠNG)</span>
+    <h1>📅 Điểm danh v4.0</h1>
+    <span class="ver">⭐ PHIÊN BẢN CHỐNG MẤT DỮ LIỆU & LỖI MẠNG ⭐</span>
 
-    <div id="countdown" class="countdown">⏳ ...</div>
+    <div id="countdown" class="countdown">⏳ Đang khởi động...</div>
 
     <div class="input-group">
-      <input type="text" id="nameField" placeholder="Tên của bạn..." />
+      <input type="text" id="nameField" placeholder="Nhập tên của bạn..." />
       <button id="saveBtn" class="btn">Lưu</button>
     </div>
 
-    <div id="status" class="status">Đang tải dữ liệu...</div>
-    <button id="checkinBtn" class="btn" style="width: 100%; height: 55px;" disabled>🟢 ĐIỂM DANH NGAY</button>
+    <div id="status" class="status">Đang kiểm tra kết nối...</div>
+    <button id="checkinBtn" class="btn" style="width: 100%;" disabled>🟢 ĐIỂM DANH NGAY</button>
 
     <div class="leaderboard">
-      <h3>🏆 Bảng xếp hạng</h3>
+      <h3 style="margin-bottom:10px;">🏆 BXH (Real-time)</h3>
       <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Tên</th>
+            <th>Ngày</th>
+          </tr>
+        </thead>
         <tbody id="leaderBody"></tbody>
       </table>
     </div>
 
     <div id="chatSection" class="chat-section">
-      <div style="text-align:left; color: var(--primary); font-weight:bold; margin-bottom:10px;">💬 Chat</div>
+      <div style="text-align:left; color: var(--primary); font-weight:bold; margin-bottom:10px;">💬 Group Chat</div>
       <div id="chatBox" class="chat-box"></div>
       <div class="input-group">
         <input type="text" id="chatInput" placeholder="Nhắn tin..." />
         <button id="sendBtn" class="btn">Gửi</button>
       </div>
     </div>
-    <button onclick="localStorage.clear(); location.reload();"
-      style="margin-top:20px; background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.7rem;">XÓA
-      TÊN & RESET</button>
+
+    <span class="net-label" id="netLabel">📡 Trình trạng: Đang kết nối server...</span>
+
+    <div style="margin-top: 15px;">
+      <button onclick="if(confirm('Xóa sạch bộ nhớ?')){localStorage.clear(); location.reload();}"
+        style="background:none; border:none; color:var(--danger); cursor:pointer; font-size:0.7rem;">🗑️ Reset dữ liệu
+        cục bộ</button>
+    </div>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
   <script>
-    const config = {
+    const firebaseConfig = {
       apiKey: "AIzaSyDhgpbLOVXdQ5Q6UvkYYMPi66RFdZ4ogLc",
       authDomain: "dielife-d5a74.firebaseapp.com",
       projectId: "dielife-d5a74",
@@ -198,107 +239,124 @@
       messagingSenderId: "654557385964",
       appId: "1:654557385964:web:22f4debf14df0ae26e81c9"
     };
-    firebase.initializeApp(config);
+
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Cấu hình SIÊU KẾT NỐI (v3.9)
-    db.settings({
-      experimentalForceLongPolling: true,
-      useFetchStreams: false
-    });
+    // 1. Cấu hình chống mất dữ liệu VÀ lỗi mạng
+    db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
+
+    // 2. Kích hoạt lưu trữ vào ổ cứng (Survival Mode)
+    // Giúp dữ liệu không mất khi F5 ngay cả khi offline
+    firebase.firestore().enablePersistence({ synchronizeTabs: true })
+      .then(() => console.log("✅ Đã bật lưu trữ Disk Persistence"))
+      .catch((e) => console.log("⚠️ Không thể bật Persistence:", e.code));
 
     const USER_KEY = 'attendanceUsername';
     let myName = localStorage.getItem(USER_KEY) || '';
     let hasCheckin = false;
+    let isConnected = false;
 
-    // Listeners (Mọi thứ chạy Real-time)
+    const nameField = document.getElementById('nameField');
+    const statusEl = document.getElementById('status');
+    const checkinBtn = document.getElementById('checkinBtn');
+    const chatSection = document.getElementById('chatSection');
+    const netLabel = document.getElementById('netLabel');
+
+    if (myName) nameField.value = myName;
+
+    // THEO DÕI TRẠNG THÁI KẾT NỐI
+    db.doc(".info/connected").onSnapshot(() => { }); // Chỉ để giữ session
+
+    // Dùng onSnapshot làm động lực duy nhất
     db.collection('users').onSnapshot(snap => {
+      isConnected = true;
+      netLabel.innerHTML = "📡 Trạng thái: <span style='color:#22c55e'>Đã kết nối trực tiếp</span>";
+
       const list = [];
       const today = new Date().toISOString().split('T')[0];
+
       snap.forEach(d => {
-        const data = d.data() || { checkins: [] };
-        list.push({ name: d.id, count: (data.checkins || []).length });
+        const data = d.data();
+        list.push({ n: d.id, c: (data.checkins || []).length });
         if (d.id === myName) {
           hasCheckin = (data.checkins || []).includes(today);
         }
       });
-      list.sort((a, b) => b.count - a.count);
+
+      list.sort((a, b) => b.c - a.c);
       document.getElementById('leaderBody').innerHTML = list.map((u, i) => `
-        <tr class="${u.name === myName ? 'me' : ''}"><td>${i + 1}</td><td>${u.name}</td><td>${u.count}</td></tr>
+        <tr class="${u.n === myName ? 'me' : ''}"><td>${i + 1}</td><td>${u.n}</td><td>${u.c}</td></tr>
       `).join('');
       updateUI();
     }, err => {
-      console.log("❌ Lỗi Firebase:", err.message);
-      document.getElementById('status').innerHTML = "<span style='color:var(--danger)'>Mạng yếu, đang thử lại...</span>";
+      console.log("Firestore Offline:", err.message);
+      netLabel.innerHTML = "📡 Trạng thái: <span style='color:#fde047'>Đang chạy ngoại tuyến (Sẽ đồng bộ sau)</span>";
+      updateUI();
     });
 
-    db.collection('messages').orderBy('time', 'desc').limit(30).onSnapshot(snap => {
+    db.collection('messages').orderBy('time', 'desc').limit(25).onSnapshot(snap => {
       const msgs = [];
       snap.forEach(d => msgs.push(d.data()));
       document.getElementById('chatBox').innerHTML = msgs.map(m => `
-        <div class="msg"><span class="msg-user">${m.user}:</span><span> ${m.text}</span></div>
+        <div class="msg"><span class="msg-u">${m.user}:</span><span> ${m.text}</span></div>
       `).join('');
     });
 
     function updateUI() {
-      const field = document.getElementById('nameField');
-      if (myName) field.value = myName;
-
-      const btn = document.getElementById('checkinBtn');
-      const st = document.getElementById('status');
-      const chat = document.getElementById('chatSection');
-
       if (!myName) {
-        st.textContent = "👋 Vui lòng nhập tên.";
-        btn.disabled = true;
-        chat.style.display = "none";
+        statusEl.textContent = "👋 Vui lòng nhập tên của bạn.";
+        checkinBtn.disabled = true;
+        chatSection.style.display = "none";
       } else if (hasCheckin) {
-        st.innerHTML = "<span style='color:var(--success)'>✅ Đã điểm danh thành công!</span>";
-        btn.disabled = true; btn.textContent = "NHẬN DIỆN THÀNH CÔNG";
-        chat.style.display = "block";
+        statusEl.innerHTML = "<span style='color:var(--success)'>✅ Bạn đã điểm danh hôm nay!</span>";
+        checkinBtn.disabled = true;
+        checkinBtn.textContent = "HẸN GẶP LẠI VÀO MAI";
+        chatSection.style.display = "block";
       } else {
-        st.innerHTML = "🔔 Đã sẵn sàng cho: <b>" + myName + "</b>";
-        btn.disabled = false; btn.textContent = "🟢 ĐIỂM DANH NGAY";
-        chat.style.display = "none";
+        statusEl.innerHTML = "🔔 Sẵn sàng: <b>" + myName + "</b>";
+        checkinBtn.disabled = false;
+        checkinBtn.textContent = "🟢 ĐIỂM DANH NGAY";
+        chatSection.style.display = "none";
       }
     }
 
-    // LƯU TÊN (KHÔNG CHỜ PHẢN HỒI MẠNG - OPTIMISTIC - v3.9)
+    // LƯU TÊN (KHÔNG CHỜ SERVER - v4.0)
     document.getElementById('saveBtn').onclick = () => {
-      const n = document.getElementById('nameField').value.trim();
+      const n = nameField.value.trim();
       if (!n) return;
       myName = n;
       localStorage.setItem(USER_KEY, n);
 
-      // Gửi lệnh set nhưng không dùng 'await' để không bị kẹt nếu mạng yếu
+      // Ghi âm thầm, persistence sẽ lo phần còn lại
       db.collection('users').doc(n).set({}, { merge: true });
       updateUI();
-      log("💾 Đã ghi nhớ tên: " + n);
     };
 
-    // ĐIỂM DANH (DÙNG arrayUnion - KHÔNG CẦN ĐỌC DỮ LIỆU - v3.9)
-    document.getElementById('checkinBtn').onclick = () => {
+    // ĐIỂM DANH TỐI THƯỢNG (v4.0)
+    checkinBtn.onclick = () => {
       if (!myName) return;
-      const btn = document.getElementById('checkinBtn');
-      btn.disabled = true; btn.textContent = "⏳ ĐANG GỬI...";
+      const t = new Date().toISOString().split('T')[0];
 
-      const today = new Date().toISOString().split('T')[0];
-      // arrayUnion cho phép ghi dữ liệu mà không cần đọc (get) trước, giúp tránh lỗi offline
-      db.collection('users').doc(myName).update({
-        checkins: firebase.firestore.FieldValue.arrayUnion(today)
-      }).then(() => {
-        log("✅ Gửi thành công!");
+      // set + arrayUnion là cách ghi an toàn nhất khi offline
+      db.collection('users').doc(myName).set({
+        checkins: firebase.firestore.FieldValue.arrayUnion(t)
+      }, { merge: true }).then(() => {
+        console.log("✅ Ghi thành công");
       }).catch(e => {
-        console.log("⚠️ Gửi chậm, đang chờ mạng...", e.message);
-        // Ngay cả khi lỗi, Firestore sẽ tự động gửi lại khi có mạng
+        console.log("⏳ Đã lưu cục bộ, sẽ đồng bộ khi có mạng.");
       });
+
+      // Fake UI ngay lập tức
+      hasCheckin = true;
+      updateUI();
     };
 
     async function sendChat() {
-      const input = document.getElementById('chatInput');
-      const text = input.value.trim();
+      const i = document.getElementById('chatInput');
+      const text = i.value.trim();
       if (!text || !myName || !hasCheckin) return;
-      input.value = "";
+      i.value = "";
       db.collection('messages').add({
         user: myName, text, time: firebase.firestore.FieldValue.serverTimestamp()
       });
@@ -313,9 +371,6 @@
       const h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
       document.getElementById('countdown').textContent = `⏳ Hết hạn: ${h}h ${m}m ${s}s`;
     }, 1000);
-
-    function log(m) { console.log(m); }
-    updateUI();
   </script>
 </body>
 
