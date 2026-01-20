@@ -4,17 +4,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Điểm danh Real-time (v3.0 - FIX)</title>
+  <title>Điểm danh Real-time (v3.1 - NETWORK FIX)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* CSS nhúng thẳng vào HTML để đảm bảo luôn cập nhật */
     :root {
       --bg: #0f172a;
       --card-bg: #1e293b;
       --primary: #38bdf8;
       --danger: #f87171;
+      --success: #4ade80;
       --text: #e2e8f0;
       --radius: 12px;
     }
@@ -34,7 +34,7 @@
       background: var(--card-bg);
       padding: 2rem;
       border-radius: var(--radius);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
       text-align: center;
       max-width: 420px;
       width: 90%;
@@ -42,7 +42,7 @@
 
     h1 {
       color: var(--primary);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.2rem;
       font-size: 1.8rem;
     }
 
@@ -50,6 +50,23 @@
       font-size: 0.7rem;
       opacity: 0.5;
       margin-bottom: 1rem;
+    }
+
+    .net-status {
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+      padding: 5px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.05);
+      display: inline-block;
+    }
+
+    .net-online {
+      color: var(--success);
+    }
+
+    .net-offline {
+      color: var(--danger);
     }
 
     .countdown {
@@ -77,6 +94,11 @@
       background: #0f172a;
       color: #fff;
       width: 100%;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--primary);
     }
 
     .btn {
@@ -90,6 +112,11 @@
       transition: 0.2s;
     }
 
+    .btn:hover:not(:disabled) {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
     .btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -99,6 +126,8 @@
       margin: 1rem 0;
       font-size: 1.1rem;
       min-height: 1.5rem;
+      border-radius: 8px;
+      padding: 5px;
     }
 
     .dead {
@@ -116,7 +145,13 @@
       border-collapse: collapse;
     }
 
-    th,
+    th {
+      text-align: left;
+      opacity: 0.7;
+      font-size: 0.9rem;
+      padding-bottom: 0.5rem;
+    }
+
     td {
       padding: 0.6rem;
       border-bottom: 1px solid #334155;
@@ -124,17 +159,31 @@
 
     tr.me {
       background: rgba(56, 189, 248, 0.15);
+      border-left: 3px solid var(--primary);
     }
 
     .debug-log {
-      font-size: 0.6rem;
-      color: #64748b;
+      font-size: 0.65rem;
+      color: #94a3b8;
       text-align: left;
-      margin-top: 1rem;
-      max-height: 60px;
-      overflow: auto;
-      border-top: 1px solid #334155;
-      padding-top: 5px;
+      margin-top: 1.5rem;
+      max-height: 100px;
+      overflow-y: auto;
+      border: 1px solid #334155;
+      padding: 8px;
+      border-radius: 8px;
+      background: #0b1120;
+    }
+
+    .reconnect-btn {
+      font-size: 0.7rem;
+      color: var(--primary);
+      background: none;
+      border: 1px solid var(--primary);
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 5px;
     }
   </style>
 </head>
@@ -142,16 +191,18 @@
 <body>
   <div class="container">
     <h1>📅 Điểm danh</h1>
-    <div class="ver">Version 3.0 (Ultimate Fix)</div>
+    <div class="ver">Version 3.1 (Network Defense)</div>
 
-    <div id="countdown" class="countdown">⏳ Đang tải...</div>
+    <div class="net-status" id="netStatus">📡 Trình duyệt: Đang kiểm tra...</div>
+
+    <div id="countdown" class="countdown">⏳ Loading...</div>
 
     <div class="input-group">
-      <input type="text" id="nameField" placeholder="Nhập tên chính xác của bạn..." />
+      <input type="text" id="nameField" placeholder="Nhập tên của bạn..." />
       <button id="saveNameBtn" class="btn" style="padding: 0.6rem 1rem;">Lưu</button>
     </div>
 
-    <div id="status" class="status">🔄 Đang kết nối Firebase...</div>
+    <div id="status" class="status">🔄 Đang kết nối...</div>
 
     <button id="checkinBtn" class="btn" style="width: 100%; font-weight: bold;" disabled>🟢 Điểm danh ngay</button>
 
@@ -169,6 +220,11 @@
       </table>
     </div>
 
+    <div style="margin-top: 1rem;">
+      <button class="reconnect-btn" id="reconnectBtn">🔄 Thử kết nối lại</button>
+      <button class="reconnect-btn" id="clearBtn" style="color:#f87171; border-color:#f87171;">🗑️ Xóa bộ nhớ</button>
+    </div>
+
     <div id="debug" class="debug-log"></div>
   </div>
 
@@ -178,15 +234,31 @@
 
   <script>
     const debugEl = document.getElementById('debug');
-    function log(m) {
-      console.log(m);
-      debugEl.innerHTML += `> ${m}<br>`;
+    const netStatusEl = document.getElementById('netStatus');
+
+    function log(m, type = "info") {
+      const time = new Date().toLocaleTimeString();
+      console.log(`[${time}] ${m}`);
+      const color = type === "error" ? "#f87171" : (type === "success" ? "#4ade80" : "#94a3b8");
+      debugEl.innerHTML += `<div style="color:${color}">[${time}] ${m}</div>`;
       debugEl.scrollTop = debugEl.scrollHeight;
     }
 
-    log("🚀 Khởi động ứng dụng v3.0...");
+    function updateNetStatus() {
+      if (navigator.onLine) {
+        netStatusEl.innerHTML = "🌐 Trình duyệt: <span class='net-online'>Trực tuyến</span>";
+        log("🌐 Hệ thống báo: Trình duyệt đang trực tuyến.");
+      } else {
+        netStatusEl.innerHTML = "🌐 Trình duyệt: <span class='net-offline'>Ngoại tuyến (Mất mạng)</span>";
+        log("❌ Hệ thống báo: Mất kết nối mạng trình duyệt!", "error");
+      }
+    }
+    window.addEventListener('online', updateNetStatus);
+    window.addEventListener('offline', updateNetStatus);
+    updateNetStatus();
 
-    // 1. Cấu hình Firebase trực tiếp
+    log("🚀 Khởi chạy Version 3.1...");
+
     const firebaseConfig = {
       apiKey: "AIzaSyDhgpbLOVXdQ5Q6UvkYYMPi66RFdZ4ogLc",
       authDomain: "dielife-d5a74.firebaseapp.com",
@@ -199,12 +271,14 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Ép buộc kết nối bền bỉ nhất
+    // TIẾP CẬN NHIỀU GÓC ĐỘ: Cấu hình Firebase khắc nghiệt nhất
     db.settings({
-      experimentalForceLongPolling: true,
-      useFetchStreams: false
+      experimentalForceLongPolling: true, // Ép buộc polling
+      useFetchStreams: false,            // Tắt fetch streams (giảm lỗi offline)
+      host: "firestore.googleapis.com", // Chỉ định host cụ thể
+      ssl: true                         // Ép buộc SSL
     });
-    log("📡 Đã ép buộc chế độ Long-Polling.");
+    log("📡 Đã cấu hình Firestore chế độ siêu ổn định (Long-Polling + NoStreams).");
 
     const usersCol = db.collection('users');
     const statusEl = document.getElementById('status');
@@ -212,6 +286,8 @@
     const nameField = document.getElementById('nameField');
     const saveNameBtn = document.getElementById('saveNameBtn');
     const leaderBody = document.getElementById('leaderBody');
+    const reconnectBtn = document.getElementById('reconnectBtn');
+    const clearBtn = document.getElementById('clearBtn');
 
     const USER_KEY = 'attendanceUsername';
     let currentName = localStorage.getItem(USER_KEY) || '';
@@ -220,11 +296,11 @@
 
     async function refreshUI() {
       if (!currentName) {
-        statusEl.textContent = "👋 Chào bạn! Hãy nhập tên để bắt đầu.";
+        statusEl.textContent = "👋 Nhập tên của bạn để bắt đầu.";
         btn.disabled = true;
         return;
       }
-      log(`🔄 Đang tải dữ liệu cho: ${currentName}`);
+      log(`� Đang tải thông tin cho: ${currentName}...`);
       try {
         const doc = await usersCol.doc(currentName).get();
         const data = doc.data() || { checkins: [] };
@@ -234,23 +310,23 @@
         if (checkins.includes(today)) {
           statusEl.innerHTML = "<span style='color:#4ade80'>✅ Bạn đã điểm danh hôm nay!</span>";
           btn.disabled = true;
-          btn.textContent = "Đã điểm danh";
+          btn.textContent = "Nghỉ ngơi thôi";
         } else {
-          // Kiểm tra tử vong
           const yesterday = formatDate(new Date(Date.now() - 86400000));
           const dayBefore = formatDate(new Date(Date.now() - 172800000));
           if (checkins.length > 0 && !checkins.includes(yesterday) && !checkins.includes(dayBefore)) {
-            statusEl.innerHTML = "<span class='dead'>💀 BẠN ĐÃ CHẾT (Bỏ qua 2 ngày)!</span>";
+            statusEl.innerHTML = "<span class='dead'>💀 BẠN ĐÃ CHẾT (Mất tích 2 ngày)!</span>";
             btn.disabled = true;
           } else {
-            statusEl.textContent = "🔔 Sẵn sàng điểm danh.";
+            statusEl.textContent = "🔔 Đã sẵn sàng điểm danh.";
             btn.disabled = false;
             btn.textContent = "🟢 Điểm danh ngay";
           }
         }
+        log("✅ Tải dữ liệu thành công.", "success");
       } catch (e) {
-        log(`❌ Lỗi Firebase: ${e.message}`);
-        statusEl.innerHTML = "<span style='color:#f87171'>❌ Lỗi kết nối (Cần nhấn Publier trong Rules).</span>";
+        log(`❌ Lỗi kết nối Firebase: ${e.message}`, "error");
+        statusEl.innerHTML = `<div style='color:#f87171; font-size:0.8rem'>Lỗi: ${e.message}<br>Thử nhấn "Kết nối lại" hoặc kiểm tra Rules.</div>`;
       }
     }
 
@@ -262,19 +338,17 @@
       localStorage.setItem(USER_KEY, n);
       saveNameBtn.disabled = true;
       try {
-        const doc = await usersCol.doc(n).get();
-        if (!doc.exists) await usersCol.doc(n).set({ checkins: [] });
+        await usersCol.doc(n).set({ checkins: [] }, { merge: true });
         nameField.value = "";
         nameField.placeholder = "Tên: " + n;
         await refreshUI();
-      } catch (e) { log(`❌ Lỗi lưu tên: ${e.message}`); }
+      } catch (e) { log(`❌ Lỗi lưu tên: ${e.message}`, "error"); }
       saveNameBtn.disabled = false;
     };
 
     btn.onclick = async () => {
-      btn.disabled = true;
-      btn.textContent = "Đang ghi...";
-      log("📝 Đang ghi điểm danh...");
+      btn.disabled = true; btn.textContent = "⏳...";
+      log("📝 Đang gửi dữ liệu điểm danh...");
       try {
         const docRef = usersCol.doc(currentName);
         const snap = await docRef.get();
@@ -283,15 +357,32 @@
         if (!data.checkins.includes(today)) {
           data.checkins.push(today);
           await docRef.update({ checkins: data.checkins });
-          log("✅ Điểm danh thành công!");
+          log("✅ ĐÃ ĐIỂM DANH THÀNH CÔNG!", "success");
         }
         await refreshUI();
-      } catch (e) { log(`❌ Lỗi điểm danh: ${e.message}`); }
+      } catch (e) {
+        log(`❌ Lỗi: ${e.message}`, "error");
+        btn.disabled = false; btn.textContent = "Thử lại";
+      }
     };
 
-    // Lắng nghe bảng xếp hạng
+    reconnectBtn.onclick = () => {
+      log("🔄 Đang thử khởi động lại kết nối...");
+      db.enableNetwork().then(() => {
+        log("✅ Đã kích hoạt lại Network.", "success");
+        refreshUI();
+      }).catch(e => log(`❌ Lỗi kích hoạt mạng: ${e.message}`, "error"));
+    };
+
+    clearBtn.onclick = () => {
+      if (confirm("Xóa bộ nhớ đệm (Tên) và load lại trang?")) {
+        localStorage.clear();
+        location.reload();
+      }
+    };
+
+    // Leaderboard
     usersCol.onSnapshot(snap => {
-      log("📥 Bảng xếp hạng cập nhật!");
       const list = [];
       snap.forEach(d => list.push({ name: d.id, count: (d.data().checkins || []).length }));
       list.sort((a, b) => b.count - a.count);
@@ -300,21 +391,20 @@
           <td>${i + 1}</td><td>${id.name}</td><td>${id.count}</td>
         </tr>
       `).join('');
-    }, err => log(`🔥 Lỗi realtime: ${err.message}`));
+    }, err => log(`🔥 Lỗi realtime: ${err.message}`, "error"));
 
-    // Đồng hồ
+    // Clock
     setInterval(() => {
       const diff = new Date().setHours(24, 0, 0, 0) - new Date();
       const h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
       document.getElementById('countdown').textContent = `⏳ Hết hạn: ${h}h ${m}m ${s}s`;
     }, 1000);
 
-    // Khởi tạo
     if (currentName) {
       nameField.placeholder = "Tên: " + currentName;
       refreshUI();
     } else {
-      statusEl.textContent = "👋 Chào bạn! Hãy nhập tên để bắt đầu.";
+      statusEl.textContent = "👋 Chào mừng! Hãy nhập tên.";
     }
   </script>
 </body>
