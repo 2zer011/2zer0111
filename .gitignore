@@ -1,0 +1,11 @@
+# Node & OS generated files
+node_modules/
+.DS_Store
+Thumbs.db
+# VSCode settings
+.vscode/
+# Build output
+site/
+# GitHub Actions artifacts
+# .github/workflows/ (DO NOT IGNORE)
+

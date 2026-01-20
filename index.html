@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Điểm danh hàng ngày</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="container">
+    <h1>📅 Điểm danh Real-time</h1>
+    <div id="countdown" class="countdown"></div>
+
+
+    <!-- Nhập tên người dùng -->
+    <div class="input-name">
+      <input type="text" id="nameField" placeholder="Nhập tên của bạn..." />
+      <button id="saveNameBtn">Lưu tên</button>
+    </div>
+
+    <div id="status" class="status"></div>
+    <button id="checkinBtn" class="btn" disabled>🟢 Điểm danh hôm nay</button>
+
+    <!-- Bảng xếp hạng -->
+    <div class="leaderboard">
+      <h2>🏆 Bảng Xếp Hạng</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Tên</th>
+            <th>Ngày</th>
+          </tr>
+        </thead>
+        <tbody id="leaderBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Firebase SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
+
+  <!-- Config & Logic -->
+  <script src="firebase-config.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

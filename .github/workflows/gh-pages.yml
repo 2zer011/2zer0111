@@ -1,0 +1,31 @@
+# GitHub Pages Deployment Workflow
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node (optional, for future builds)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Copy static site
+        run: |
+          mkdir -p site
+          cp -r *.html *.css *.js site/
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
+          force_orphan: true

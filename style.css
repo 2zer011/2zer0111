@@ -1,0 +1,155 @@
+/* style.css - Định dạng cho trang Điểm danh */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+:root {
+  --bg: #0f172a;
+  /* Dark navy background */
+  --card-bg: #1e293b;
+  /* Slightly lighter card */
+  --primary: #38bdf8;
+  /* Cyan accent */
+  --danger: #f87171;
+  /* Red for “dead” */
+  --text: #e2e8f0;
+  /* Light text */
+  --radius: 12px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.container {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+  max-width: 420px;
+  width: 90%;
+}
+
+h1 {
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  font-size: 1.8rem;
+  color: var(--primary);
+}
+
+.status {
+  margin: 1rem 0;
+  font-size: 1.1rem;
+  min-height: 1.4rem;
+}
+
+.btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 0.8rem 1.4rem;
+  font-size: 1rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background .2s, transform .1s;
+}
+
+.btn:hover {
+  background: #0ea5e9;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.dead {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+/* Countdown styling */
+.countdown {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  background: linear-gradient(to right, #fde047, #ca8a04);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 5px rgba(250, 204, 21, 0.3));
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* Leaderboard styles */
+
+.leaderboard {
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.leaderboard h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary);
+}
+
+.leaderboard table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard th,
+.leaderboard td {
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid #334155;
+  text-align: left;
+}
+
+.leaderboard th {
+  background: var(--card-bg);
+  font-weight: 600;
+}
+
+.leaderboard tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.input-name {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.input-name input {
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius);
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: var(--text);
+}
+
+.input-name button {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.input-name button:hover {
+  background: #0ea5e9;
+}
