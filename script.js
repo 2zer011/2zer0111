@@ -1,6 +1,9 @@
-/* script.js - SIÊU DEBUG - Kiểm tra từng bước */
+/* script.js - SIÊU DEBUG - Cập nhật FIX OFFLINE */
+// Force Firestore to use long-polling (bypasses some network blocks)
+db.settings({ experimentalForceLongPolling: true });
 
 console.log("🚀 Script.js đang tải...");
+
 
 function formatDate(date) { return date.toISOString().split('T')[0]; }
 function today() { return formatDate(new Date()); }
