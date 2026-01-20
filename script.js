@@ -1,9 +1,12 @@
-/* script.js - SIÊU DEBUG - Cập nhật FIX OFFLINE */
-// Force Firestore to use long-polling (bypasses some network blocks)
-db.settings({ experimentalForceLongPolling: true });
+/* script.js - PHIÊN BẢN SỬA LỖI KẾT NỐI (FIRESTORE FIX) */
 
-console.log("🚀 Script.js đang tải...");
+// 1. Ép buộc Firestore sử dụng Long-Polling để tránh bị chặn mạng
+db.settings({
+  experimentalForceLongPolling: true,
+  useFetchStreams: false
+});
 
+console.log("🚀 Đang khởi động ứng dụng với chế độ Long-Polling...");
 
 function formatDate(date) { return date.toISOString().split('T')[0]; }
 function today() { return formatDate(new Date()); }
@@ -11,13 +14,6 @@ function today() { return formatDate(new Date()); }
 const USER_KEY = 'attendanceUsername';
 function getUsername() { return localStorage.getItem(USER_KEY) || ''; }
 function setUsername(name) { localStorage.setItem(USER_KEY, name); }
-
-// Kiểm tra db đã sẵn sàng chưa
-if (typeof db === 'undefined') {
-  console.error("❌ BIẾN 'db' CHƯA ĐƯỢC ĐỊNH NGHĨA! Kiểm tra firebase-config.js");
-} else {
-  console.log("✅ Firestore 'db' đã sẵn sàng.");
-}
 
 const usersCol = db.collection('users');
 
@@ -28,93 +24,91 @@ const nameField = document.getElementById('nameField');
 const saveNameBtn = document.getElementById('saveNameBtn');
 const leaderBody = document.getElementById('leaderBody');
 
-function showError(msg) {
-  statusEl.innerHTML = `<span style="color: #f87171;">❌ Lỗi: ${msg}</span>`;
-  console.error("DEBUG ERROR:", msg);
+function showError(msg, detail = "") {
+  statusEl.innerHTML = `<div style="color: #f87171; font-size: 0.9rem;">
+    ❌ Lỗi: ${msg}<br>
+    <small style="color: #94a3b8;">${detail}</small>
+  </div>`;
+  console.error("DEBUG ERROR:", msg, detail);
 }
 
 async function createUserIfNotExists(username) {
-  console.log(`🔍 Đang kiểm tra người dùng: ${username}`);
+  console.log(`🔍 Kiểm tra người dùng: ${username}`);
   try {
     const doc = await usersCol.doc(username).get();
     if (!doc.exists) {
-      console.log(`🆕 Người dùng mới, đang tạo document...`);
+      console.log("🆕 Tạo mới user...");
       await usersCol.doc(username).set({ checkins: [] });
-      console.log(`✅ Đã tạo document cho ${username}`);
-    } else {
-      console.log(`👤 Người dùng đã tồn tại.`);
     }
+    console.log("✅ User sẵn sàng.");
   } catch (e) {
-    showError("Lỗi kết nối Firebase (Quyền truy cập).");
-    console.error(e);
+    showError("Không thể kết nối Firebase.", "Gợi ý: Kiểm tra mạng hoặc nhấn 'Publier' trong tab Sécurité.");
     throw e;
   }
 }
 
 async function updateUI() {
-  console.log("🔄 Đang cập nhật giao diện...");
-  try {
-    const username = getUsername();
-    if (!username) {
-      statusEl.textContent = '⚠️ Vui lòng nhập tên để bắt đầu.';
-      btn.disabled = true;
-      return;
-    }
+  const username = getUsername();
+  if (!username) {
+    statusEl.textContent = '⚠️ Về trang chủ nhập tên để bắt đầu.';
+    btn.disabled = true;
+    return;
+  }
 
+  try {
     const snap = await usersCol.doc(username).get();
     const checkins = (snap.data() && snap.data().checkins) || [];
     const todayStr = today();
 
     if (checkins.includes(todayStr)) {
-      statusEl.textContent = '✅ Đã điểm danh hôm nay';
+      statusEl.innerHTML = '<span style="color: #4ade80;">✅ Đã điểm danh hôm nay!</span>';
       btn.disabled = true;
-      btn.textContent = 'Đã điểm danh';
+      btn.textContent = 'Đã xong';
     } else {
-      const yesterday = formatDate(new Date(Date.now() - 86400000));
-      const dayBefore = formatDate(new Date(Date.now() - 2 * 86400000));
-      const missedTwo = !checkins.includes(yesterday) && !checkins.includes(dayBefore);
+      const y = formatDate(new Date(Date.now() - 86400000));
+      const dbDate = formatDate(new Date(Date.now() - 2 * 86400000));
+      const missedTwo = !checkins.includes(y) && !checkins.includes(dbDate);
 
       if (missedTwo && checkins.length > 0) {
-        statusEl.innerHTML = '<span class="dead">💀 Bạn đã chết! (Bỏ 2 ngày)</span>';
+        statusEl.innerHTML = '<span class="dead">💀 Bạn đã chết (Bỏ 2 ngày)!</span>';
         btn.disabled = true;
       } else {
-        statusEl.textContent = '🔔 Chưa điểm danh hôm nay';
+        statusEl.textContent = '🔔 Sẵn sàng điểm danh hôm nay';
         btn.disabled = false;
         btn.textContent = '🟢 Điểm danh hôm nay';
       }
     }
   } catch (e) {
-    showError("Không thể lấy dữ liệu từ Firestore.");
-    console.error(e);
+    showError("Lỗi đồng bộ dữ liệu.", e.message);
   }
 }
 
 async function checkIn() {
-  console.log("🖱️ Đang xử lý nhấn nút Điểm danh...");
+  btn.disabled = true;
+  btn.textContent = "Đang xử lý...";
+  const username = getUsername();
+  const todayStr = today();
+
   try {
-    const username = getUsername();
-    const todayStr = today();
     const docRef = usersCol.doc(username);
     const snap = await docRef.get();
     const data = snap.data() || { checkins: [] };
 
     if (!data.checkins.includes(todayStr)) {
       data.checkins.push(todayStr);
-      console.log(`📝 Đang ghi ngày ${todayStr} vào Firestore...`);
       await docRef.update({ checkins: data.checkins });
-      console.log("✅ Ghi dữ liệu thành công!");
+      console.log("📝 Đã ghi ngày điểm danh mới.");
     }
     await updateUI();
   } catch (e) {
-    showError("Lỗi ghi dữ liệu. Kiểm tra tab Rules (Sécurité).");
-    console.error(e);
+    showError("Lỗi khi ghi dữ liệu.", e.message);
+    btn.disabled = false;
+    btn.textContent = "Thử lại";
   }
 }
 
 function startLeaderboardListener() {
-  console.log("📈 Bắt đầu lắng nghe Bảng xếp hạng...");
   usersCol.onSnapshot(snapshot => {
-    console.log("📥 Nhận dữ liệu mới từ Firestore!");
     const rows = [];
     snapshot.forEach(doc => {
       const { checkins = [] } = doc.data();
@@ -130,38 +124,28 @@ function startLeaderboardListener() {
       leaderBody.appendChild(tr);
     });
   }, (err) => {
-    console.error("🔥 Bảng xếp hạng lỗi:", err);
-    showError("Lỗi Firebase (Hãy nhấn Publier trong tab Rules).");
+    showError("Bảng xếp hạng không tải được.", err.message);
   });
 }
 
 saveNameBtn.addEventListener('click', async () => {
   const name = nameField.value.trim();
-  console.log(`🖱️ Nhấn Lưu tên: ${name}`);
   if (!name) return;
-
   saveNameBtn.disabled = true;
-  saveNameBtn.textContent = "...";
-
   try {
     setUsername(name);
     await createUserIfNotExists(name);
-    nameField.value = '';
     nameField.placeholder = "Chào " + name;
+    nameField.value = "";
     await updateUI();
   } catch (e) {
-    console.error("Lỗi khi lưu tên:", e);
+    saveNameBtn.disabled = false;
   } finally {
     saveNameBtn.disabled = false;
-    saveNameBtn.textContent = "Lưu tên";
   }
 });
 
-btn.addEventListener('click', async () => {
-  btn.disabled = true;
-  btn.textContent = "...";
-  await checkIn();
-});
+btn.addEventListener('click', checkIn);
 
 function updateCountdown() {
   const diff = new Date().setHours(24, 0, 0, 0) - new Date();
@@ -170,16 +154,14 @@ function updateCountdown() {
   const s = Math.floor((diff % 60000) / 1000);
   countdownEl.textContent = `⏳ Hết hạn sau: ${h}h ${m}m ${s}s`;
 }
-
 setInterval(updateCountdown, 1000);
 updateCountdown();
 
 (async () => {
-  console.log("🏁 Khởi chạy ứng dụng...");
   const username = getUsername();
   if (username) {
-    console.log(`👤 Tìm thấy session cho: ${username}`);
-    await createUserIfNotExists(username);
+    nameField.placeholder = "Tên: " + username;
+    try { await createUserIfNotExists(username); } catch (e) { }
   }
   await updateUI();
   startLeaderboardListener();
