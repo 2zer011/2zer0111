@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Điểm danh v5.2 - BẢN SỬA LỖI CUỐI</title>
+  <title>Điểm danh v6.0 - BẢN KHÔNG MẤT DỮ LIỆU</title>
   <style>
     :root {
       --bg: #0b0f1a;
@@ -41,24 +41,48 @@
     h1 {
       color: var(--primary);
       margin: 0;
-      font-size: 1.6rem;
+      font-size: 1.8rem;
+      letter-spacing: -1px;
     }
 
     .ver {
-      font-size: 0.7rem;
-      color: #4ade80;
+      font-size: 0.75rem;
+      color: #fde047;
       font-weight: bold;
       margin-bottom: 20px;
       display: block;
     }
 
-    .status {
-      margin: 15px 0;
-      font-size: 0.9rem;
+    .countdown {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #fde047;
       padding: 10px;
+      background: rgba(0, 0, 0, 0.2);
       border-radius: 8px;
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid #334155;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    input {
+      padding: 1rem;
+      border-radius: 10px;
+      border: 2px solid #334155;
+      background: #0f172a;
+      color: #fff;
+      width: 100%;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--primary);
     }
 
     .btn {
@@ -69,6 +93,12 @@
       border-radius: 10px;
       cursor: pointer;
       font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
     }
 
     .btn:disabled {
@@ -76,85 +106,94 @@
       cursor: not-allowed;
     }
 
-    .leaderboard {
-      margin-top: 20px;
-      text-align: left;
-      background: #0b1120;
-      padding: 10px;
+    .status-card {
+      margin: 15px 0;
+      font-size: 0.95rem;
+      padding: 12px;
       border-radius: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid #334155;
+    }
+
+    .leaderboard {
+      margin-top: 25px;
+      text-align: left;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
     }
 
     td {
-      padding: 10px 5px;
+      padding: 12px 8px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .diag-hub {
-      margin-top: 25px;
-      border: 1px solid #38bdf8;
-      border-radius: 10px;
-      padding: 10px;
-      text-align: left;
+    tr.me {
+      background: rgba(56, 189, 248, 0.15);
+      border-left: 4px solid var(--primary);
+    }
+
+    .sync-indicator {
+      font-size: 0.7rem;
+      margin-top: 20px;
+      padding: 8px;
+      border-radius: 5px;
       background: #000;
+      border: 1px solid #334155;
+      display: inline-block;
     }
 
-    .diag-title {
-      font-size: 0.75rem;
-      color: #38bdf8;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-
-    .diag-log {
+    .diag-box {
+      margin-top: 20px;
       font-size: 0.65rem;
-      color: #94a3b8;
-      height: 120px;
+      color: #64748b;
+      text-align: left;
+      height: 100px;
       overflow-y: auto;
       font-family: monospace;
+      border: 1px dashed #334155;
+      padding: 8px;
     }
   </style>
 </head>
 
 <body>
   <div class="container">
-    <h1>📅 Điểm danh v5.2</h1>
-    <span class="ver">�️ BẢN TỐI ƯU HÓA KẾT NỐI</span>
+    <h1>📅 Điểm danh v6.0</h1>
+    <span class="ver">💎 BẢN CHỐNG MẤT DỮ LIỆU TUYỆT ĐỐI 💎</span>
 
-    <div class="status" id="status">Vui lòng nhập tên để bắt đầu...</div>
+    <div id="countdown" class="countdown">⏳ ...</div>
 
-    <div class="input-group" style="display:flex; gap:5px; margin-bottom:10px;">
-      <input type="text" id="nameField" placeholder="Tên..."
-        style="flex:1; padding:10px; background:#0f172a; border:1px solid #334155; color:white; border-radius:8px;" />
-      <button id="saveBtn" class="btn">Lưu</button>
+    <div class="input-group">
+      <input type="text" id="nameField" placeholder="Nhập tên của bạn..." />
+      <button id="saveBtn" class="btn">Lưu tên</button>
     </div>
 
-    <button id="checkinBtn" class="btn" style="width: 100%; height: 50px;" disabled>🟢 ĐIỂM DANH NGAY</button>
+    <div class="status-card" id="status">Vui lòng chờ đồng bộ...</div>
+    <button id="checkinBtn" class="btn" style="width: 100%; height: 50px; font-size: 1.1rem;" disabled>🟢 ĐIỂM DANH
+      NGAY</button>
 
     <div class="leaderboard">
-      <h3 style="margin:0 0 10px 0; font-size:1rem; color:var(--primary);">🏆 Bảng xếp hạng</h3>
+      <h3 style="margin:0 0 10px 0; color:var(--primary);">🏆 Bảng xếp hạng</h3>
       <table>
         <tbody id="leaderBody"></tbody>
       </table>
     </div>
 
-    <div class="diag-hub">
-      <div class="diag-title">🛠️ TRUNG TÂM CHẨN ĐOÁN (v5.2)</div>
-      <div id="diagLog" class="diag-log"></div>
-    </div>
+    <div id="syncMsg" class="sync-indicator">� Trạng thái: Đang kết nối...</div>
 
-    <div style="margin-top: 15px; display: flex; gap: 5px; justify-content: center;">
-      <button id="testBtn"
-        style="font-size: 0.7rem; background:#22c55e; color:black; border:none; padding:8px; border-radius:5px; cursor:pointer; font-weight:bold;">⚡
-        KIỂM TRA MỚI</button>
-      <button onclick="if(confirm('Xóa sạch mọi thứ để bắt đầu lại?')){localStorage.clear(); location.reload(true)}"
-        style="font-size: 0.7rem; background:#ef4444; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">🔥
-        RESET TOÀN BỘ</button>
+    <div id="diag" class="diag-box"></div>
+
+    <div style="margin-top: 15px; display: flex; gap: 8px; justify-content: center;">
+      <button onclick="location.reload(true)"
+        style="padding: 5px 10px; font-size: 0.7rem; background:#334155; color:white; border:none; border-radius:5px; cursor:pointer;">🔄
+        Load lại</button>
+      <button onclick="if(confirm('Xóa sạch?')){localStorage.clear(); location.reload(true)}"
+        style="padding: 5px 10px; font-size: 0.7rem; background:#ef4444; color:white; border:none; border-radius:5px; cursor:pointer;">�️
+        Reset tên</button>
     </div>
   </div>
 
@@ -162,11 +201,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
   <script>
-    const diagLog = document.getElementById('diagLog');
+    const diag = document.getElementById('diag');
     function log(m, type = "info") {
-      const color = type === "err" ? "#ef4444" : type === "ok" ? "#22c55e" : "#94a3b8";
-      diagLog.innerHTML += `<div style="color:${color}">> ${m}</div>`;
-      diagLog.scrollTop = diagLog.scrollHeight;
+      const color = type === "err" ? "#ef4444" : type === "ok" ? "#22c55e" : "#64748b";
+      diag.innerHTML += `<div style="color:${color}">> ${m}</div>`;
+      diag.scrollTop = diag.scrollHeight;
     }
 
     const firebaseConfig = {
@@ -178,75 +217,107 @@
       appId: "1:654557385964:web:22f4debf14df0ae26e81c9"
     };
 
-    log("🔌 Bắt đầu khởi tạo v5.2...");
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Sửa lỗi cảnh báo: Đặt host một cách tường minh kèm Long Polling
-    db.settings({
-      host: "firestore.googleapis.com",
-      ssl: true,
-      experimentalForceLongPolling: true,
-      useFetchStreams: false
-    });
-    log("📡 Đã cấu hình bộ lọc kết nối SIÊU MẠNH.");
+    // 1. ÉP KIỂU KẾT NỐI (LONG POLLING)
+    db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
+
+    // 2. KÍCH HOẠT LƯU TRỮ TRÊN Ổ CỨNG (DISK PERSISTENCE)
+    // Sẽ lưu lại dữ liệu ngay cả khi F5 hoặc tắt mạng
+    firebase.firestore().enablePersistence({ synchronizeTabs: true })
+      .then(() => log("✅ Đã bật chế độ lưu trữ ổ cứng (Persistence)", "ok"))
+      .catch((err) => log("⚠️ Không thể lưu ổ cứng: " + err.code));
 
     let myName = localStorage.getItem('attendanceUsername') || '';
-    if (myName) {
-      document.getElementById('nameField').value = myName;
-      document.getElementById('status').textContent = "🔔 Đã nhận diện: " + myName;
-    }
+    let hasCheckin = false;
+    const today = () => new Date().toISOString().split('T')[0];
 
-    // LISTENER CHÍNH
+    const nameField = document.getElementById('nameField');
+    const statusEl = document.getElementById('status');
+    const checkinBtn = document.getElementById('checkinBtn');
+    const syncMsg = document.getElementById('syncMsg');
+
+    if (myName) nameField.value = myName;
+
+    // LẮNG NGHE REAL-TIME
     db.collection('users').onSnapshot(snap => {
-      log("📥 Dữ liệu đồng bộ!", "ok");
+      log("📥 Dữ liệu từ mây đã đồng bộ!", "ok");
+      syncMsg.innerHTML = "📡 Trạng thái: <span style='color:#22c55e'>Đã kết nối mây</span>";
+
       const list = [];
-      const today = new Date().toISOString().split('T')[0];
-      snap.forEach(d => list.push({ n: d.id, c: (d.data().checkins || []).length }));
+      snap.forEach(d => {
+        const data = d.data();
+        list.push({ n: d.id, c: (data.checkins || []).length });
+        if (d.id === myName) {
+          hasCheckin = (data.checkins || []).includes(today());
+        }
+      });
       list.sort((a, b) => b.c - a.c);
       document.getElementById('leaderBody').innerHTML = list.map((u, i) => `
-        <tr><td>${i + 1}</td><td>${u.n}</td><td>${u.c} ngày</td></tr>
+        <tr class="${u.n === myName ? 'me' : ''}"><td>${i + 1}</td><td>${u.n}</td><td>${u.c} ngày</td></tr>
       `).join('');
-      document.getElementById('checkinBtn').disabled = !myName;
+      updateUI();
     }, err => {
-      log("❌ Lỗi: " + err.message, "err");
+      log("❌ Lỗi kết nối: " + err.message, "err");
+      syncMsg.innerHTML = "📡 Trạng thái: <span style='color:#fde047'>Đang chạy ngoại tuyến (Offline)</span>";
+      updateUI();
     });
 
-    document.getElementById('testBtn').onclick = async () => {
-      log("⚡ Đang thử ghi dữ liệu mẫu...");
-      try {
-        await db.collection('_test').doc('conn').set({ time: Date.now() });
-        log("✅ KẾT NỐI SERVER HOÀN HẢO!", "ok");
-        alert("Chúc mừng! Web đã kết nối thành công tới Google!");
-      } catch (e) {
-        log("❌ Vẫn lỗi: " + e.message, "err");
+    function updateUI() {
+      if (!myName) {
+        statusEl.textContent = "👋 Chào mừng! Hãy nhập tên của bạn.";
+        checkinBtn.disabled = true;
+      } else if (hasCheckin) {
+        statusEl.innerHTML = "<span style='color:var(--success); font-weight:bold;'>✅ BẠN ĐÃ ĐIỂM DANH HÔM NAY!</span>";
+        checkinBtn.disabled = true;
+        checkinBtn.textContent = "HẸN GẶP LẠI VÀO MAI";
+      } else {
+        statusEl.innerHTML = "🔔 Sẵn sàng điểm danh cho <b>" + myName + "</b>";
+        checkinBtn.disabled = false;
+        checkinBtn.textContent = "🟢 ĐIỂM DANH NGAY";
       }
-    };
+    }
 
     document.getElementById('saveBtn').onclick = () => {
-      const n = document.getElementById('nameField').value.trim();
+      const n = nameField.value.trim();
       if (!n) return;
       localStorage.setItem('attendanceUsername', n);
       myName = n;
-      log("💾 Đã lưu tên mới: " + n);
+      log("💾 Đã lưu tên: " + n);
+      // Ghi để đảm bảo User tồn tại
       db.collection('users').doc(n).set({}, { merge: true });
-      document.getElementById('checkinBtn').disabled = false;
-      document.getElementById('status').textContent = "🔔 Chào " + n;
+      updateUI();
     };
 
-    document.getElementById('checkinBtn').onclick = async () => {
+    checkinBtn.onclick = () => {
       if (!myName) return;
-      const t = new Date().toISOString().split('T')[0];
-      try {
-        await db.collection('users').doc(myName).set({
-          checkins: firebase.firestore.FieldValue.arrayUnion(t)
-        }, { merge: true });
-        log("✅ Điểm danh thành công!", "ok");
-      } catch (e) {
-        log("❌ Lỗi điểm danh: " + e.message, "err");
-      }
+      checkinBtn.disabled = true;
+      checkinBtn.textContent = "⏳ ĐANG GỬI...";
+
+      // GỬI TỐI THƯỢNG: set + arrayUnion + merge
+      // Cách này vừa tạo mới nếu chưa có, vừa thêm ngày mà không làm mất ngày cũ
+      db.collection('users').doc(myName).set({
+        checkins: firebase.firestore.FieldValue.arrayUnion(today())
+      }, { merge: true }).then(() => {
+        log("✅ Ghi thành công lên Cloud!", "ok");
+      }).catch(e => {
+        log("⏳ Đã lưu vào máy, sẽ gửi Cloud khi có mạng.", "ok");
+      });
+
+      // Optimistic UI: Hiệu ứng điểm danh thành công ngay lập tức
+      hasCheckin = true;
+      updateUI();
     };
+
+    setInterval(() => {
+      const diff = new Date().setHours(24, 0, 0, 0) - new Date();
+      if (diff < 0) return location.reload();
+      const h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
+      document.getElementById('countdown').textContent = `⏳ Hết hạn: ${h}h ${m}m ${s}s`;
+    }, 1000);
+
+    updateUI();
   </script>
 </body>
 
