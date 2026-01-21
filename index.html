@@ -4,16 +4,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Điểm danh v8.0 - ĐỒNG BỘ TUYỆT ĐỐI</title>
+  <title>Điểm danh v9.0 - DỌN DẸP & KẾT NỐI SẠCH</title>
   <style>
     :root {
-      --bg: #0b0f1a;
-      --card-bg: #161c2d;
+      --bg: #0b1120;
+      --card: #1e293b;
       --primary: #38bdf8;
-      --danger: #ef4444;
       --success: #22c55e;
+      --danger: #ef4444;
       --text: #f1f5f9;
-      --radius: 12px;
     }
 
     body {
@@ -29,20 +28,20 @@
     }
 
     .container {
-      background: var(--card-bg);
+      background: var(--card);
       padding: 1.5rem;
-      border-radius: var(--radius);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+      border-radius: 16px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
       text-align: center;
       max-width: 480px;
       width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     h1 {
       color: var(--primary);
       margin: 0;
       font-size: 1.8rem;
-      letter-spacing: -1px;
     }
 
     .ver {
@@ -53,34 +52,48 @@
       display: block;
     }
 
-    .status-card {
+    .status-box {
       margin: 15px 0;
       padding: 15px;
       border-radius: 12px;
-      background: rgba(0, 0, 0, 0.4);
+      background: rgba(0, 0, 0, 0.2);
       border: 1px solid #334155;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    input {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: #fff;
+      outline: none;
     }
 
     .btn {
       background: var(--primary);
       color: #fff;
       border: none;
-      padding: 1rem 1.5rem;
-      border-radius: 10px;
-      cursor: pointer;
+      padding: 10px 20px;
+      border-radius: 8px;
       font-weight: bold;
-      transition: 0.3s;
+      cursor: pointer;
     }
 
     .btn:disabled {
       opacity: 0.3;
-      cursor: not-allowed;
     }
 
     .leaderboard {
       margin-top: 25px;
       text-align: left;
-      background: #0b1120;
+      background: #0f172a;
       padding: 10px;
       border-radius: 12px;
     }
@@ -96,8 +109,8 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .sync-monitor {
-      margin-top: 25px;
+    .monitor {
+      margin-top: 20px;
       border: 2px solid var(--primary);
       border-radius: 12px;
       padding: 12px;
@@ -105,114 +118,74 @@
       background: #000;
     }
 
-    .sync-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .sync-status {
-      font-size: 0.75rem;
-      font-weight: bold;
-    }
-
     .diag-log {
       font-size: 0.65rem;
       color: #94a3b8;
-      height: 100px;
+      height: 120px;
       overflow-y: auto;
       font-family: monospace;
       border-top: 1px solid #334155;
       padding-top: 8px;
-    }
-
-    .chat-box {
-      background: #000;
-      border: 1px solid #334155;
-      height: 150px;
-      overflow-y: auto;
-      margin: 10px 0;
-      padding: 10px;
-      text-align: left;
-      border-radius: 8px;
-    }
-
-    .msg {
-      margin-bottom: 5px;
-      font-size: 0.8rem;
-    }
-
-    .msg-u {
-      color: var(--primary);
-      font-weight: bold;
+      margin-top: 8px;
     }
   </style>
 </head>
 
 <body>
   <div class="container">
-    <h1>📅 Điểm danh v8.0</h1>
-    <span class="ver">💎 BẢN ĐỒNG BỘ ĐA THIẾT BỊ 💎</span>
+    <h1>📅 Điểm danh v9.0</h1>
+    <span class="ver">�️ BẢN DỌN DẸP BỘ NHỚ & ĐỒNG BỘ SẠCH</span>
 
-    <div class="status-card" id="status">Vui lòng nhập tên...</div>
+    <div class="status-box" id="status">Đang khởi tạo hệ thống v9...</div>
 
-    <div class="input-group" style="display:flex; gap:5px; margin-bottom:15px;">
-      <input type="text" id="nameField" placeholder="Nhập tên..."
-        style="flex:1; padding:12px; background:#0f172a; border:1px solid #334155; color:white; border-radius:10px;" />
+    <div class="input-group">
+      <input type="text" id="nameField" placeholder="Nhập tên..." />
       <button id="saveBtn" class="btn">Lưu</button>
     </div>
 
-    <button id="checkinBtn" class="btn" style="width: 100%; height: 50px;" disabled>🟢 ĐIỂM DANH NGAY</button>
+    <button id="checkinBtn" class="btn" style="width: 100%; height: 50px; font-size: 1.1rem;" disabled>🟢 ĐIỂM DANH
+      NGAY</button>
 
     <div class="leaderboard">
-      <h3 style="margin:0 0 10px 0; color:var(--primary); font-size:0.9rem;">🏆 BXH (Những ai đã lên Cloud)</h3>
+      <h3 style="margin:0 0 10px 0; color:var(--primary); font-size:0.9rem;">🏆 BXH Trên Cloud</h3>
       <table>
         <tbody id="leaderBody"></tbody>
       </table>
     </div>
 
-    <!-- KHUNG CHAT ĐỂ TEST -->
-    <div id="chatSection" style="display:none; margin-top:20px;">
-      <div style="font-size:0.8rem; font-weight:bold; color:var(--primary);">💬 Chat Nhóm (Để kiểm tra đồng bộ)</div>
-      <div id="chatBox" class="chat-box"></div>
-      <div style="display:flex; gap:5px;">
-        <input type="text" id="chatInput" placeholder="Nhắn gì đó..."
-          style="flex:1; padding:8px; background:#0f172a; border:1px solid #334155; color:white; border-radius:8px;" />
-        <button id="sendBtn" class="btn" style="padding:0 15px;">Gửi</button>
+    <div class="monitor">
+      <div
+        style="font-size:0.75rem; font-weight:bold; color:var(--primary); display:flex; justify-content:space-between;">
+        <span>📡 GIÁM SÁT KẾT NỐI</span>
+        <span id="syncStatus" style="color:#64748b;">● Chờ kết nối...</span>
       </div>
-    </div>
-
-    <!-- KHUNG GIÁM SÁT ĐỒNG BỘ -->
-    <div class="sync-monitor">
-      <div class="sync-bar">
-        <span class="sync-status" id="syncLabel">⏳ Đang kiểm tra mây...</span>
-        <div id="syncDot" style="width:12px; height:12px; border-radius:50%; background:#64748b;"></div>
-      </div>
-      <div id="pendingStatus" style="font-size:0.7rem; color:#fde047; margin-bottom:5px;">🔍 Đang theo dõi tiến trình
-        gửi dữ liệu...</div>
       <div id="diag" class="diag-log"></div>
     </div>
 
-    <div style="margin-top: 15px; display: flex; gap: 5px; justify-content: center;">
-      <button id="uploadTest"
-        style="font-size:0.7rem; background:#22c55e; color:black; border:none; padding:8px; border-radius:5px; font-weight:bold; cursor:pointer;">�
-        THỬ ĐẨY LÊN MÂY</button>
+    <div style="margin-top: 10px; display: flex; gap: 5px; justify-content: center;">
+      <button id="deepReset"
+        style="font-size:0.65rem; background:var(--danger); color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">🔥
+        DỌN DẸP TRIỆT ĐỂ (RESET ALL)</button>
       <button onclick="location.reload(true)"
-        style="font-size: 0.7rem; background:#334155; color:white; border:none; padding:8px; border-radius:5px;">�
+        style="font-size: 0.65rem; background:#334155; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">🔄
         Refresh</button>
     </div>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore, collection, onSnapshot, setDoc, doc,
+      enableIndexedDbPersistence, arrayUnion, serverTimestamp, orderBy, query, limit,
+      terminate, clearIndexedDbPersistence
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  <script>
     const diag = document.getElementById('diag');
     function log(m, type = "info") {
       const color = type === "err" ? "#ef4444" : type === "ok" ? "#22c55e" : "#94a3b8";
       diag.innerHTML += `<div style="color:${color}">> ${m}</div>`;
       diag.scrollTop = diag.scrollHeight;
+      console.log(m);
     }
 
     const firebaseConfig = {
@@ -224,135 +197,109 @@
       appId: "1:654557385964:web:22f4debf14df0ae26e81c9"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
+    log("🚀 Khởi động v9.0 (Modular SDK)...");
 
-    // CỐ GẮNG BẬT CACHE (Nếu lỗi vẫn cho chạy tiếp)
-    firebase.firestore().enablePersistence({ synchronizeTabs: true }).catch(e => {
-      log("⚠️ Lưu ý: Cache ổ cứng bị giới hạn (có thể do mở nhiều tab).", "err");
+    // HÀM RESET TRIỆT ĐỂ
+    async function performDeepReset() {
+      log("🔥 Đang dọn dẹp triệt để bộ nhớ...", "err");
+      localStorage.clear();
+      try {
+        await clearIndexedDbPersistence(db);
+        log("✅ Đã xóa Cache Firestore.");
+      } catch (e) { }
+      // Xóa toàn bộ IndexedDB của Firestore một cách thủ công
+      log("🧹 Đang quét sạch IndexedDB...");
+      const dbs = ["firestore/[DEFAULT]/dielife-d5a74/main", "firebase-heartbeat-database", "firebase-installations-database"];
+      dbs.forEach(name => window.indexedDB.deleteDatabase(name));
+      alert("Đã dọn dẹp sạch! Trang web sẽ tự tải lại.");
+      location.reload(true);
+    }
+    document.getElementById('deepReset').onclick = performDeepReset;
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // BẬT CACHE CẨN THẬN
+    enableIndexedDbPersistence(db).catch(err => {
+      log("⚠️ Chú ý: " + err.code, "err");
     });
 
     let myName = localStorage.getItem('attendanceUsername') || '';
     let hasCheckin = false;
-    if (myName) document.getElementById('nameField').value = myName;
+    const today = () => new Date().toISOString().split('T')[0];
 
-    // GIÁM SÁT KẾT NỐI
-    db.collection('_health').doc('heartbeat').onSnapshot(() => {
-      document.getElementById('syncDot').style.background = "#22c55e";
-      document.getElementById('syncDot').style.boxShadow = "0 0 10px #22c55e";
-      document.getElementById('syncLabel').innerHTML = "<span style='color:#22c55e'>MÂY ĐÃ THÔNG SUỐT</span>";
-      log("📡 Kết nối Google: OK", "ok");
-    }, err => {
-      document.getElementById('syncDot').style.background = "#ef4444";
-      document.getElementById('syncLabel').innerHTML = "<span style='color:#ef4444'>BỊ CHẶN: " + err.code + "</span>";
-    });
-
-    // THEO DÕI DỮ LIỆU ĐANG CHỜ (CHƯA LÊN MÂY)
-    setInterval(async () => {
-      try {
-        // waitForPendingWrites sẽ chờ cho đến khi dữ liệu được gửi thành công
-        // Ở đây mình dùng một mẹo nhỏ để kiểm tra xem có dữ liệu chờ không qua metadata của snapshot
-      } catch (e) { }
-    }, 2000);
-
-    // LẮNG NGHE BXH
-    db.collection('users').onSnapshot(snap => {
-      log("📥 Đã tải BXH mới từ Mây.", "ok");
+    // THEO DÕI BXH
+    onSnapshot(collection(db, "users"), (snap) => {
+      log("📥 Đồng bộ Cloud thành công!", "ok");
+      document.getElementById('syncStatus').innerHTML = "<span style='color:#22c55e'>● ONLINE</span>";
       const list = [];
-      const today = new Date().toISOString().split('T')[0];
       snap.forEach(d => {
         const data = d.data();
         list.push({ n: d.id, c: (data.checkins || []).length });
-        if (d.id === myName) hasCheckin = (data.checkins || []).includes(today);
+        if (d.id === myName) hasCheckin = (data.checkins || []).includes(today());
       });
       list.sort((a, b) => b.c - a.c);
       document.getElementById('leaderBody').innerHTML = list.map((u, i) => `
         <tr style="${u.n === myName ? 'background:rgba(56,189,248,0.1); border-left:3px solid #38bdf8;' : ''}"><td>${i + 1}</td><td>${u.n}</td><td>${u.c} ngày</td></tr>
       `).join('');
       updateUI();
+    }, (err) => {
+      log("❌ Lỗi Cloud: " + err.code, "err");
+      document.getElementById('syncStatus').innerHTML = "<span style='color:#ef4444'>● DISCONNECTED</span>";
     });
 
-    // LẮNG NGHE CHAT
-    db.collection('messages').orderBy('time', 'desc').limit(20).onSnapshot(snap => {
-      const msgs = [];
-      snap.forEach(d => msgs.push(d.data()));
-      document.getElementById('chatBox').innerHTML = msgs.map(m => `
-        <div class="msg"><span class="msg-u">${m.user}:</span><span> ${m.text}</span></div>
-      `).join('');
-    });
-
-    // TEST ĐẨY DỮ LIỆU CỰC MẠNH (Await Server Confirmation)
-    document.getElementById('uploadTest').onclick = async () => {
-      log("🚀 Đang thử gửi dữ liệu kiểm tra...");
-      document.getElementById('pendingStatus').innerHTML = "⏳ Đang đẩy dữ liệu lên Google Cloud...";
-      try {
-        await db.collection('_sync_test').doc('status').set({
-          user: myName || 'guest',
-          time: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        log("✅ ĐẨY DỮ LIỆU THÀNH CÔNG! Server đã nhận.", "ok");
-        document.getElementById('pendingStatus').innerHTML = "✅ Dữ liệu đã lên Mây thành công!";
-        alert("Thành công! Máy bạn đã gửi được dữ liệu lên Google Cloud.");
-      } catch (e) {
-        log("❌ KHÔNG THỂ GỬI: " + e.message, "err");
-        document.getElementById('pendingStatus').innerHTML = "❌ Gửi thất bại: " + e.message;
-        if (e.message.includes("permission")) alert("Lỗi: Bạn chưa mở quyền Write trong Cloud Firestore Rules!");
-      }
-    };
+    const nameField = document.getElementById('nameField');
+    if (myName) nameField.value = myName;
 
     function updateUI() {
       const btn = document.getElementById('checkinBtn');
       const st = document.getElementById('status');
-      const chat = document.getElementById('chatSection');
       if (!myName) {
         st.textContent = "👋 Vui lòng nhập tên.";
-        btn.disabled = true; chat.style.display = "none";
+        btn.disabled = true;
       } else if (hasCheckin) {
-        st.innerHTML = "<span style='color:#22c55e;'>✅ BẠN ĐÃ ĐIỂM DANH!</span>";
+        st.innerHTML = "<span style='color:#22c55e; font-weight:bold;'>✅ ĐÃ ĐIỂM DANH!</span>";
         btn.disabled = true; btn.textContent = "HẸN GẶP LẠI";
-        chat.style.display = "block";
       } else {
         st.innerHTML = "🔔 " + myName + " ơi, điểm danh thôi!";
         btn.disabled = false; btn.textContent = "🟢 ĐIỂM DANH NGAY";
-        chat.style.display = "none";
       }
     }
 
-    document.getElementById('saveBtn').onclick = () => {
-      const n = document.getElementById('nameField').value.trim();
+    document.getElementById('saveBtn').onclick = async () => {
+      const n = nameField.value.trim();
       if (!n) return;
       localStorage.setItem('attendanceUsername', n);
       myName = n;
       log("💾 Đã lưu tên: " + n);
-      db.collection('users').doc(n).set({}, { merge: true });
+      await setDoc(doc(db, "users", n), {}, { merge: true });
       updateUI();
     };
 
     document.getElementById('checkinBtn').onclick = async () => {
       if (!myName) return;
-      const t = new Date().toISOString().split('T')[0];
-      log("⏳ Đang gửi điểm danh...");
+      log("⏳ Đang gửi dữ liệu lên Cloud...");
       try {
-        await db.collection('users').doc(myName).set({
-          checkins: firebase.firestore.FieldValue.arrayUnion(t)
+        await setDoc(doc(db, "users", myName), {
+          checkins: arrayUnion(today())
         }, { merge: true });
-        log("✅ Điểm danh ĐÃ LÊN MÂY!", "ok");
+        log("✅ GỬI THÀNH CÔNG! Đã lưu trên Cloud.", "ok");
       } catch (e) {
-        log("⏳ Đang chờ mạng (Gửi chậm)...", "ok");
+        log("⏳ Đang xếp hàng chờ mạng...", "ok");
       }
-      hasCheckin = true; updateUI();
+      hasCheckin = true;
+      updateUI();
     };
 
-    function sendChat() {
-      const i = document.getElementById('chatInput');
-      const text = i.value.trim();
-      if (!text || !myName || !hasCheckin) return;
-      i.value = "";
-      db.collection('messages').add({ user: myName, text, time: firebase.firestore.FieldValue.serverTimestamp() });
-    }
-    document.getElementById('sendBtn').onclick = sendChat;
-    document.getElementById('chatInput').onkeypress = (e) => { if (e.key === 'Enter') sendChat(); };
+    // ĐỒNG HỒ
+    setInterval(() => {
+      const diff = new Date().setHours(24, 0, 0, 0) - new Date();
+      if (diff < 0) return location.reload();
+      const h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
+      document.getElementById('status').innerHTML += ""; // dummy
+    }, 1000);
+
+    updateUI();
   </script>
 </body>
 
