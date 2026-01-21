@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Điểm danh v7.1 - GỠ LỖI CỰC MẠNH</title>
+  <title>Điểm danh v7.2 - KẾT NỐI TOÀN CẦU</title>
   <style>
     :root {
       --bg: #0b0f1a;
@@ -88,15 +88,42 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
 
     td {
-      padding: 12px 8px;
+      padding: 10px 5px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    /* NETWORK HUB */
+    .chat-section {
+      margin-top: 25px;
+      border-top: 1px solid #334155;
+      padding-top: 20px;
+      display: none;
+    }
+
+    .chat-box {
+      background: #000;
+      border-radius: 10px;
+      height: 160px;
+      overflow-y: auto;
+      padding: 10px;
+      margin-bottom: 10px;
+      text-align: left;
+      border: 1px solid #334155;
+    }
+
+    .msg {
+      margin-bottom: 6px;
+      font-size: 0.8rem;
+    }
+
+    .msg-u {
+      font-weight: bold;
+      color: var(--primary);
+    }
+
     .net-hub {
       margin-top: 25px;
       border: 1px solid #38bdf8;
@@ -104,34 +131,42 @@
       padding: 12px;
       text-align: left;
       background: #000;
-    }
-
-    .net-title {
-      font-size: 0.8rem;
-      color: #38bdf8;
-      font-weight: bold;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
+      position: relative;
     }
 
     .dot {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       display: inline-block;
       background: #64748b;
+      margin-right: 5px;
     }
 
     .dot-live {
       background: #22c55e;
       box-shadow: 0 0 10px #22c55e;
+      animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+
+      100% {
+        opacity: 1;
+      }
     }
 
     .diag-log {
       font-size: 0.65rem;
       color: #94a3b8;
-      height: 100px;
+      height: 80px;
       overflow-y: auto;
       font-family: monospace;
       border-top: 1px solid #334155;
@@ -143,44 +178,53 @@
 
 <body>
   <div class="container">
-    <h1>📅 Điểm danh v7.1</h1>
-    <span class="ver">🔍 CHÈN MÃ GỠ LỖI BỘ NHỚ (V7.1)</span>
+    <h1>📅 Điểm danh v7.2</h1>
+    <span class="ver">🌍 BẢN KẾT NỐI TOÀN CẦU + CHAT TEST</span>
 
-    <div class="status-box" id="status">Đang khởi tạo kết nối...</div>
+    <div class="status-box" id="status">Vui lòng nhập tên...</div>
 
     <div class="input-group" style="display:flex; gap:5px; margin-bottom:15px;">
-      <input type="text" id="nameField" placeholder="Cần nhập tên trước..."
+      <input type="text" id="nameField" placeholder="Tên bạn..."
         style="flex:1; padding:12px; background:#0f172a; border:1px solid #334155; color:white; border-radius:10px;" />
-      <button id="saveBtn" class="btn" style="padding:0 20px;">Lưu</button>
+      <button id="saveBtn" class="btn">Lưu</button>
     </div>
 
-    <button id="checkinBtn" class="btn" style="width: 100%; height: 50px; font-size: 1.1rem;" disabled>🟢 ĐIỂM DANH
-      NGAY</button>
+    <button id="checkinBtn" class="btn" style="width: 100%; height: 50px;" disabled>🟢 ĐIỂM DANH NGAY</button>
 
     <div class="leaderboard">
-      <h3 style="margin:0 0 10px 0; color:var(--primary);">🏆 BXH Real-time</h3>
+      <h3 style="margin:0 0 10px 0; color:var(--primary); font-size: 0.9rem;">🏆 BXH</h3>
       <table>
         <tbody id="leaderBody"></tbody>
       </table>
     </div>
 
-    <!-- NETWORK HUB -->
-    <div class="net-hub">
-      <div class="net-title">
-        <span>📡 TRẠNG THÁI KẾT NỐI MÂY</span>
-        <span id="netDot" class="dot"></span>
+    <!-- CHAT ĐỂ TEST ĐỒNG BỘ -->
+    <div id="chatSection" class="chat-section">
+      <div style="font-weight:bold; color:var(--primary); margin-bottom:8px; font-size:0.8rem;">💬 Chat Đồng Bộ (Test
+        xem có thấy tin của nhau không)</div>
+      <div id="chatBox" class="chat-box"></div>
+      <div style="display:flex; gap:5px;">
+        <input type="text" id="chatInput" placeholder="Nhắn gì đó..."
+          style="flex:1; padding:8px; background:#0f172a; border:1px solid #334155; color:white; border-radius:8px;" />
+        <button id="sendBtn" class="btn" style="padding:0 15px;">Gửi</button>
       </div>
-      <div id="netStatus" style="font-size:0.7rem; color:#fde047;">⏳ Đang tìm Google...</div>
+    </div>
+
+    <div class="net-hub">
+      <div style="font-size:0.75rem; font-weight:bold; color:#38bdf8; display:flex; align-items:center;">
+        <span id="netDot" class="dot"></span> TRẠNG THÁI MÂY: <span id="netStatus" style="margin-left:5px;">Đang kết
+          nối...</span>
+      </div>
       <div id="diag" class="diag-log"></div>
     </div>
 
-    <div style="margin-top: 15px; display: flex; gap: 8px; justify-content: center;">
+    <div style="margin-top: 10px; display: flex; gap: 5px; justify-content: center;">
       <button onclick="location.reload(true)"
-        style="padding: 8px 15px; font-size: 0.75rem; background:#334155; color:white; border:none; border-radius:8px; cursor:pointer;">🔄
-        Load lại trang</button>
+        style="font-size: 0.65rem; background:#334155; color:white; border:none; padding:8px; border-radius:5px;">🔄 Tải
+        lại</button>
       <button onclick="localStorage.clear(); location.reload(true)"
-        style="padding: 8px 15px; font-size: 0.75rem; background:#ef4444; color:white; border:none; border-radius:8px; cursor:pointer;">⚠️
-        RESET TOÀN BỘ</button>
+        style="font-size: 0.65rem; background:#ef4444; color:white; border:none; padding:8px; border-radius:5px;">🗑️
+        Reset Data</button>
     </div>
   </div>
 
@@ -204,73 +248,68 @@
       appId: "1:654557385964:web:22f4debf14df0ae26e81c9"
     };
 
-    log("🔌 Khởi động v7.1...");
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
 
-    db.settings({
-      experimentalForceLongPolling: true,
-      useFetchStreams: false
+    // CỐ GẮNG BẬT CACHE (Nếu lỗi vẫn cho chạy tiếp)
+    firebase.firestore().enablePersistence({ synchronizeTabs: true }).catch(e => {
+      log("⚠️ Cache lỗi: " + e.code + ". Hãy đóng các tab khác!", "err");
     });
-
-    // XỬ LÝ LỖI CACHE CHI TIẾT
-    firebase.firestore().enablePersistence({ synchronizeTabs: true })
-      .then(() => log("✅ Cache ổ cứng đã sẵn sàng.", "ok"))
-      .catch((err) => {
-        if (err.code == 'failed-precondition') {
-          log("⚠️ LỖI: Nhiều tab đang mở cùng lúc. Hãy tắt hết các tab khác!", "err");
-        } else if (err.code == 'unimplemented') {
-          log("⚠️ LỖI: Trình duyệt không hỗ trợ lưu cache. Bạn đang dùng tab ẩn danh?", "err");
-        } else {
-          log("⚠️ LỖI BỘ NHỚ: " + err.code, "err");
-        }
-      });
 
     let myName = localStorage.getItem('attendanceUsername') || '';
     let hasCheckin = false;
     if (myName) document.getElementById('nameField').value = myName;
 
-    // HEARTBEAT
+    // THEO DÕI TẤT CẢ QUA MÂY
     db.collection('_health').doc('heartbeat').onSnapshot(() => {
       document.getElementById('netDot').className = "dot dot-live";
-      document.getElementById('netStatus').innerHTML = "✅ <span style='color:#22c55e'>ĐÃ KẾT NỐI MÂY</span>";
-      log("📡 Kết nối Google: OK!", "ok");
+      document.getElementById('netStatus').innerHTML = "<span style='color:#22c55e'>ĐÃ KẾT NỐI</span>";
+      log("📡 Đã thông mạng với Google!", "ok");
     }, err => {
       document.getElementById('netDot').className = "dot";
-      document.getElementById('netStatus').innerHTML = "❌ <span style='color:#ef4444'>Mất kết nối: " + err.code + "</span>";
-      log("❌ Lỗi Mạng: " + err.code, "err");
+      document.getElementById('netStatus').innerHTML = "<span style='color:#ef4444'>BỊ CHẶN: " + err.code + "</span>";
     });
 
-    // BXH
     db.collection('users').onSnapshot(snap => {
+      log("📥 Đã nhận BXH mới từ Cloud.", "ok");
       const list = [];
       const today = new Date().toISOString().split('T')[0];
       snap.forEach(d => {
         const data = d.data();
         list.push({ n: d.id, c: (data.checkins || []).length });
-        if (d.id === myName) {
-          hasCheckin = (data.checkins || []).includes(today);
-        }
+        if (d.id === myName) hasCheckin = (data.checkins || []).includes(today);
       });
       list.sort((a, b) => b.c - a.c);
       document.getElementById('leaderBody').innerHTML = list.map((u, i) => `
-        <tr class="${u.n === myName ? 'me' : ''}"><td>${i + 1}</td><td>${u.n}</td><td>${u.c} ngày</td></tr>
+        <tr style="${u.n === myName ? 'background:rgba(56,189,248,0.1); border-left:3px solid #38bdf8;' : ''}"><td>${i + 1}</td><td>${u.n}</td><td>${u.c} ngày</td></tr>
       `).join('');
       updateUI();
+    });
+
+    db.collection('messages').orderBy('time', 'desc').limit(20).onSnapshot(snap => {
+      const msgs = [];
+      snap.forEach(d => msgs.push(d.data()));
+      document.getElementById('chatBox').innerHTML = msgs.map(m => `
+        <div class="msg"><span class="msg-u">${m.user}:</span><span> ${m.text}</span></div>
+      `).join('');
     });
 
     function updateUI() {
       const btn = document.getElementById('checkinBtn');
       const st = document.getElementById('status');
+      const chat = document.getElementById('chatSection');
       if (!myName) {
         st.textContent = "👋 Vui lòng nhập tên.";
-        btn.disabled = true;
+        btn.disabled = true; chat.style.display = "none";
       } else if (hasCheckin) {
-        st.innerHTML = "<span style='color:#22c55e; font-weight:bold;'>✅ ĐÃ ĐIỂM DANH!</span>";
-        btn.disabled = true;
+        st.innerHTML = "<span style='color:#22c55e;'>✅ BẠN ĐÃ ĐIỂM DANH!</span>";
+        btn.disabled = true; btn.textContent = "HẸN GẶP LẠI";
+        chat.style.display = "block";
       } else {
-        st.innerHTML = "🔔 Sẵn sàng: <b>" + myName + "</b>";
-        btn.disabled = false;
+        st.innerHTML = "🔔 " + myName + " ơi, điểm danh thôi!";
+        btn.disabled = false; btn.textContent = "🟢 ĐIỂM DANH NGAY";
+        chat.style.display = "none";
       }
     }
 
@@ -287,16 +326,20 @@
     document.getElementById('checkinBtn').onclick = () => {
       if (!myName) return;
       const t = new Date().toISOString().split('T')[0];
-      db.collection('users').doc(myName).set({
-        checkins: firebase.firestore.FieldValue.arrayUnion(t)
-      }, { merge: true }).then(() => {
-        log("✅ Đã ghi lên Cloud!", "ok");
-      }).catch(e => {
-        log("⏳ Đang đợi mạng để gửi data...", "ok");
-      });
-      hasCheckin = true;
-      updateUI();
+      db.collection('users').doc(myName).set({ checkins: firebase.firestore.FieldValue.arrayUnion(t) }, { merge: true })
+        .then(() => log("✅ Đã ghi lên Cloud cực nhanh!", "ok"));
+      hasCheckin = true; updateUI();
     };
+
+    function sendChat() {
+      const i = document.getElementById('chatInput');
+      const text = i.value.trim();
+      if (!text || !myName || !hasCheckin) return;
+      i.value = "";
+      db.collection('messages').add({ user: myName, text, time: firebase.firestore.FieldValue.serverTimestamp() });
+    }
+    document.getElementById('sendBtn').onclick = sendChat;
+    document.getElementById('chatInput').onkeypress = (e) => { if (e.key === 'Enter') sendChat(); };
 
     setInterval(() => {
       const diff = new Date().setHours(24, 0, 0, 0) - new Date();
