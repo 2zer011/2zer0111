@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Điểm danh v5.1 - KIỂM TRA SÂU</title>
+  <title>Điểm danh v5.2 - BẢN SỬA LỖI CUỐI</title>
   <style>
     :root {
       --bg: #0b0f1a;
@@ -46,7 +46,7 @@
 
     .ver {
       font-size: 0.7rem;
-      color: #fde047;
+      color: #4ade80;
       font-weight: bold;
       margin-bottom: 20px;
       display: block;
@@ -76,7 +76,6 @@
       cursor: not-allowed;
     }
 
-    /* BXH */
     .leaderboard {
       margin-top: 20px;
       text-align: left;
@@ -96,7 +95,6 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    /* DIAGNOSTIC HUB */
     .diag-hub {
       margin-top: 25px;
       border: 1px solid #38bdf8;
@@ -120,31 +118,23 @@
       overflow-y: auto;
       font-family: monospace;
     }
-
-    .config-check {
-      font-size: 0.6rem;
-      color: #4ade80;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid #334155;
-    }
   </style>
 </head>
 
 <body>
   <div class="container">
-    <h1>📅 Điểm danh v5.1</h1>
-    <span class="ver">🔍 BẢN KIỂM TRA LỖI TOÀN DIỆN</span>
+    <h1>📅 Điểm danh v5.2</h1>
+    <span class="ver">�️ BẢN TỐI ƯU HÓA KẾT NỐI</span>
 
-    <div class="status" id="status">Đang tải cấu hình kết nối...</div>
+    <div class="status" id="status">Vui lòng nhập tên để bắt đầu...</div>
 
     <div class="input-group" style="display:flex; gap:5px; margin-bottom:10px;">
-      <input type="text" id="nameField" placeholder="Nhập tên..."
+      <input type="text" id="nameField" placeholder="Tên..."
         style="flex:1; padding:10px; background:#0f172a; border:1px solid #334155; color:white; border-radius:8px;" />
       <button id="saveBtn" class="btn">Lưu</button>
     </div>
 
-    <button id="checkinBtn" class="btn" style="width: 100%; height: 50px;" disabled>🟢 ĐIỂM DANH THỬ</button>
+    <button id="checkinBtn" class="btn" style="width: 100%; height: 50px;" disabled>🟢 ĐIỂM DANH NGAY</button>
 
     <div class="leaderboard">
       <h3 style="margin:0 0 10px 0; font-size:1rem; color:var(--primary);">🏆 Bảng xếp hạng</h3>
@@ -153,24 +143,18 @@
       </table>
     </div>
 
-    <!-- CÔNG CỤ CHẨN ĐOÁN -->
     <div class="diag-hub">
-      <div class="diag-title">�️ TRUNG TÂM CHẨN ĐOÁN LỖI</div>
+      <div class="diag-title">🛠️ TRUNG TÂM CHẨN ĐOÁN (v5.2)</div>
       <div id="diagLog" class="diag-log"></div>
-
-      <div id="configInfo" class="config-check">
-        <b>Dự án:</b> dielife-d5a74<br>
-        <b>API Key:</b> AIzaSy...ogLc
-      </div>
     </div>
 
-    <div style="margin-top: 10px; display: flex; gap: 5px; justify-content: center;">
+    <div style="margin-top: 15px; display: flex; gap: 5px; justify-content: center;">
       <button id="testBtn"
         style="font-size: 0.7rem; background:#22c55e; color:black; border:none; padding:8px; border-radius:5px; cursor:pointer; font-weight:bold;">⚡
-        TEST KẾT NỐI NGAY</button>
-      <button onclick="location.reload(true)"
-        style="font-size: 0.7rem; background:#334155; color:white; border:none; padding:8px; border-radius:5px;">� Tải
-        lại trang</button>
+        KIỂM TRA MỚI</button>
+      <button onclick="if(confirm('Xóa sạch mọi thứ để bắt đầu lại?')){localStorage.clear(); location.reload(true)}"
+        style="font-size: 0.7rem; background:#ef4444; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">🔥
+        RESET TOÀN BỘ</button>
     </div>
   </div>
 
@@ -183,7 +167,6 @@
       const color = type === "err" ? "#ef4444" : type === "ok" ? "#22c55e" : "#94a3b8";
       diagLog.innerHTML += `<div style="color:${color}">> ${m}</div>`;
       diagLog.scrollTop = diagLog.scrollHeight;
-      console.log(m);
     }
 
     const firebaseConfig = {
@@ -195,38 +178,31 @@
       appId: "1:654557385964:web:22f4debf14df0ae26e81c9"
     };
 
-    log("🔌 Đang khởi tạo Firebase v5.1...");
+    log("🔌 Bắt đầu khởi tạo v5.2...");
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    db.settings({ experimentalForceLongPolling: true, useFetchStreams: false });
+
+    // Sửa lỗi cảnh báo: Đặt host một cách tường minh kèm Long Polling
+    db.settings({
+      host: "firestore.googleapis.com",
+      ssl: true,
+      experimentalForceLongPolling: true,
+      useFetchStreams: false
+    });
+    log("📡 Đã cấu hình bộ lọc kết nối SIÊU MẠNH.");
 
     let myName = localStorage.getItem('attendanceUsername') || '';
     if (myName) {
       document.getElementById('nameField').value = myName;
-      document.getElementById('status').textContent = "🔔 Chào " + myName;
+      document.getElementById('status').textContent = "🔔 Đã nhận diện: " + myName;
     }
 
-    // BUTTON TEST KẾT NỐI
-    document.getElementById('testBtn').onclick = async () => {
-      log("⚡ Bắt đầu Test Kết Nối...");
-      try {
-        const testRef = db.collection('_test_connection').doc('status');
-        await testRef.set({ time: new Date().toISOString() });
-        log("✅ KẾT NỐI THÀNH CÔNG! Database đang hoạt động.", "ok");
-      } catch (e) {
-        log("❌ LỖI KẾT NỐI: " + e.message, "err");
-        if (e.message.includes("does not exist")) {
-          log("👉 Giải pháp: Bạn hãy vào Firebase Console, mục Firestore Database, nhấn nút 'Tạo Database' (Create Database) và chọn 'Native Mode'.", "err");
-        } else if (e.message.includes("permission-denied")) {
-          log("👉 Giải pháp: Bạn hãy vào tab 'Rules' (Sửa lỗi bảo mật) trong Firebase và chỉnh thành 'allow read, write: if true;'.", "err");
-        }
-      }
-    };
-
-    // LẮNG NGHE BXH
-    db.collection('users').limit(20).onSnapshot(snap => {
-      log("📥 Đã tải dữ liệu BXH.", "ok");
+    // LISTENER CHÍNH
+    db.collection('users').onSnapshot(snap => {
+      log("📥 Dữ liệu đồng bộ!", "ok");
       const list = [];
+      const today = new Date().toISOString().split('T')[0];
       snap.forEach(d => list.push({ n: d.id, c: (d.data().checkins || []).length }));
       list.sort((a, b) => b.c - a.c);
       document.getElementById('leaderBody').innerHTML = list.map((u, i) => `
@@ -234,15 +210,26 @@
       `).join('');
       document.getElementById('checkinBtn').disabled = !myName;
     }, err => {
-      log("❌ Lỗi Real-time: " + err.message, "err");
+      log("❌ Lỗi: " + err.message, "err");
     });
+
+    document.getElementById('testBtn').onclick = async () => {
+      log("⚡ Đang thử ghi dữ liệu mẫu...");
+      try {
+        await db.collection('_test').doc('conn').set({ time: Date.now() });
+        log("✅ KẾT NỐI SERVER HOÀN HẢO!", "ok");
+        alert("Chúc mừng! Web đã kết nối thành công tới Google!");
+      } catch (e) {
+        log("❌ Vẫn lỗi: " + e.message, "err");
+      }
+    };
 
     document.getElementById('saveBtn').onclick = () => {
       const n = document.getElementById('nameField').value.trim();
       if (!n) return;
       localStorage.setItem('attendanceUsername', n);
       myName = n;
-      log("💾 Đã lưu tên: " + n);
+      log("💾 Đã lưu tên mới: " + n);
       db.collection('users').doc(n).set({}, { merge: true });
       document.getElementById('checkinBtn').disabled = false;
       document.getElementById('status').textContent = "🔔 Chào " + n;
@@ -250,19 +237,16 @@
 
     document.getElementById('checkinBtn').onclick = async () => {
       if (!myName) return;
-      log("⏳ Đang gửi điểm danh...");
       const t = new Date().toISOString().split('T')[0];
       try {
         await db.collection('users').doc(myName).set({
           checkins: firebase.firestore.FieldValue.arrayUnion(t)
         }, { merge: true });
-        log("✅ Đã điểm danh thành công!", "ok");
+        log("✅ Điểm danh thành công!", "ok");
       } catch (e) {
         log("❌ Lỗi điểm danh: " + e.message, "err");
       }
     };
-
-    log("🏁 Đã sẵn sàng. Bạn hãy nhấn nút 'TEST KẾT NỐI' màu xanh để kiểm tra.");
   </script>
 </body>
 
