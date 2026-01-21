@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Điểm danh v7.0 - XUYÊN TƯỜNG LỬA</title>
+  <title>Điểm danh v7.1 - GỠ LỖI CỰC MẠNH</title>
   <style>
     :root {
       --bg: #0b0f1a;
@@ -92,7 +92,7 @@
     }
 
     td {
-      padding: 12px 5px;
+      padding: 12px 8px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
@@ -143,10 +143,10 @@
 
 <body>
   <div class="container">
-    <h1>📅 Điểm danh v7.0</h1>
-    <span class="ver">🌐 PHIÊN BẢN XUYÊN TƯỜNG LỬA (ULTIMATE SYNC)</span>
+    <h1>📅 Điểm danh v7.1</h1>
+    <span class="ver">🔍 CHÈN MÃ GỠ LỖI BỘ NHỚ (V7.1)</span>
 
-    <div class="status-box" id="status">Đang khởi tạo kết nối mây...</div>
+    <div class="status-box" id="status">Đang khởi tạo kết nối...</div>
 
     <div class="input-group" style="display:flex; gap:5px; margin-bottom:15px;">
       <input type="text" id="nameField" placeholder="Cần nhập tên trước..."
@@ -158,7 +158,7 @@
       NGAY</button>
 
     <div class="leaderboard">
-      <h3 style="margin:0 0 10px 0; color:var(--primary);">🏆 Bảng xếp hạng Real-time</h3>
+      <h3 style="margin:0 0 10px 0; color:var(--primary);">🏆 BXH Real-time</h3>
       <table>
         <tbody id="leaderBody"></tbody>
       </table>
@@ -170,7 +170,7 @@
         <span>📡 TRẠNG THÁI KẾT NỐI MÂY</span>
         <span id="netDot" class="dot"></span>
       </div>
-      <div id="netStatus" style="font-size:0.7rem; color:#fde047;">⏳ Đang dò tìm tín hiệu Google...</div>
+      <div id="netStatus" style="font-size:0.7rem; color:#fde047;">⏳ Đang tìm Google...</div>
       <div id="diag" class="diag-log"></div>
     </div>
 
@@ -179,8 +179,8 @@
         style="padding: 8px 15px; font-size: 0.75rem; background:#334155; color:white; border:none; border-radius:8px; cursor:pointer;">🔄
         Load lại trang</button>
       <button onclick="localStorage.clear(); location.reload(true)"
-        style="padding: 8px 15px; font-size: 0.75rem; background:#ef4444; color:white; border:none; border-radius:8px; cursor:pointer;">🗑️
-        Dọn dẹp & Reset</button>
+        style="padding: 8px 15px; font-size: 0.75rem; background:#ef4444; color:white; border:none; border-radius:8px; cursor:pointer;">⚠️
+        RESET TOÀN BỘ</button>
     </div>
   </div>
 
@@ -204,38 +204,44 @@
       appId: "1:654557385964:web:22f4debf14df0ae26e81c9"
     };
 
-    log("🔌 Đang khởi động v7.0...");
+    log("🔌 Khởi động v7.1...");
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // CHIẾN THUẬT KẾT NỐI TỐI THƯỢNG
     db.settings({
-      host: "firestore.googleapis.com",
-      ssl: true,
       experimentalForceLongPolling: true,
       useFetchStreams: false
     });
 
-    // BẬT LƯU TRỮ CỤC BỘ (QUAN TRỌNG ĐỂ KHÔNG MẤT DỮ LIỆU KHI CHỜ MẠNG)
-    firebase.firestore().enablePersistence({ synchronizeTabs: true }).catch(e => log("⚠️ Cache ổ cứng bị lỗi:", "err"));
+    // XỬ LÝ LỖI CACHE CHI TIẾT
+    firebase.firestore().enablePersistence({ synchronizeTabs: true })
+      .then(() => log("✅ Cache ổ cứng đã sẵn sàng.", "ok"))
+      .catch((err) => {
+        if (err.code == 'failed-precondition') {
+          log("⚠️ LỖI: Nhiều tab đang mở cùng lúc. Hãy tắt hết các tab khác!", "err");
+        } else if (err.code == 'unimplemented') {
+          log("⚠️ LỖI: Trình duyệt không hỗ trợ lưu cache. Bạn đang dùng tab ẩn danh?", "err");
+        } else {
+          log("⚠️ LỖI BỘ NHỚ: " + err.code, "err");
+        }
+      });
 
     let myName = localStorage.getItem('attendanceUsername') || '';
     let hasCheckin = false;
-
     if (myName) document.getElementById('nameField').value = myName;
 
-    // THEO DÕI KẾT NỐI (HEARTBEAT)
+    // HEARTBEAT
     db.collection('_health').doc('heartbeat').onSnapshot(() => {
       document.getElementById('netDot').className = "dot dot-live";
-      document.getElementById('netStatus').innerHTML = "✅ <span style='color:#22c55e'>ĐÃ THÔNG MẠNG VỚI GOOGLE</span>";
-      log("📡 Đã nhận tín hiệu từ Cloud!", "ok");
+      document.getElementById('netStatus').innerHTML = "✅ <span style='color:#22c55e'>ĐÃ KẾT NỐI MÂY</span>";
+      log("📡 Kết nối Google: OK!", "ok");
     }, err => {
       document.getElementById('netDot').className = "dot";
-      document.getElementById('netStatus').innerHTML = "❌ <span style='color:#ef4444'>BỊ KẸT: " + err.message + "</span>";
-      log("❌ Lỗi: " + err.message, "err");
+      document.getElementById('netStatus').innerHTML = "❌ <span style='color:#ef4444'>Mất kết nối: " + err.code + "</span>";
+      log("❌ Lỗi Mạng: " + err.code, "err");
     });
 
-    // BXH REAL-TIME
+    // BXH
     db.collection('users').onSnapshot(snap => {
       const list = [];
       const today = new Date().toISOString().split('T')[0];
@@ -257,14 +263,14 @@
       const btn = document.getElementById('checkinBtn');
       const st = document.getElementById('status');
       if (!myName) {
-        st.textContent = "👋 Nhập tên của bạn để bắt đầu.";
+        st.textContent = "👋 Vui lòng nhập tên.";
         btn.disabled = true;
       } else if (hasCheckin) {
-        st.innerHTML = "<span style='color:#22c55e; font-weight:bold;'>✅ BẠN ĐÃ ĐIỂM DANH!</span>";
-        btn.disabled = true; btn.textContent = "HẸN GẶP LẠI";
+        st.innerHTML = "<span style='color:#22c55e; font-weight:bold;'>✅ ĐÃ ĐIỂM DANH!</span>";
+        btn.disabled = true;
       } else {
-        st.innerHTML = "🔔 " + myName + " ơi, điểm danh thôi!";
-        btn.disabled = false; btn.textContent = "🟢 ĐIỂM DANH NGAY";
+        st.innerHTML = "🔔 Sẵn sàng: <b>" + myName + "</b>";
+        btn.disabled = false;
       }
     }
 
@@ -284,9 +290,9 @@
       db.collection('users').doc(myName).set({
         checkins: firebase.firestore.FieldValue.arrayUnion(t)
       }, { merge: true }).then(() => {
-        log("✅ Ghi thành công lên Cloud!", "ok");
+        log("✅ Đã ghi lên Cloud!", "ok");
       }).catch(e => {
-        log("⏳ Đã lưu vào máy, sẽ sync khi có mạng.", "ok");
+        log("⏳ Đang đợi mạng để gửi data...", "ok");
       });
       hasCheckin = true;
       updateUI();
