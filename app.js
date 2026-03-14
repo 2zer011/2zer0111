@@ -4,7 +4,7 @@
    CONFIG
 ═══════════════════════════════════════════════ */
 const IS_MOB = window.innerWidth <= 768;
-const PRESETS = ['🐺','🦊','🐱','🐼','🦁','🐸','👾','💀','🤖','🐧','🔥','💎'];
+const PRESETS = ['🐺','🦊','🐱','🐼','🦁','🐸','👾','💀','🤖','⚡','🔥','💎'];
 const ICE = { iceServers: [
   { urls: 'stun:stun.l.google.com:19302' },
   { urls: 'stun:stun1.l.google.com:19302' },
@@ -328,11 +328,15 @@ async function handleData(from, d) {
       delete nicks[d.pid]; delete avatars[d.pid];
       sysmsg(n + ' left'); refresh(); break;
     }
-    case 'msg':
-      if (isHost) bcast(d, from);
-      const pt = await decMsg(cKey, d.enc);
-      if (pt !== null) { addMsg(nicks[from] || from.slice(0, 8), from, pt, false, d.ts); incMsg(); }
+    case 'msg': {
+      if (isHost) bcast(d, from);   // relay before reassemble
+      const assembled = tryReassemble(d);
+      if (!assembled) break;        // still waiting for more chunks
+      const senderId = assembled.from || from;
+      const pt = await decMsg(cKey, assembled.enc);
+      if (pt !== null) { addMsg(nicks[senderId] || senderId.slice(0, 8), senderId, pt, false, assembled.ts); incMsg(); }
       break;
+    }
     case 'typ':
       if (isHost) bcast(d, from); showTyping(nicks[d.from] || '...'); break;
     case 'styp':
@@ -447,7 +451,7 @@ function sendMsg() {
   inp.value = ''; if (IS_MOB) inp.style.height = 'auto'; clearTypingBcast();
   encMsg(cKey, txt).then(e => {
     const p = { type: 'msg', enc: e, from: myId, ts: Date.now() };
-    if (isHost) bcast(p); else { const h = peers[roomCode]; if (h && h.open) h.send(p); }
+    sendLargeMsg(p);
     addMsg(myNick, myId, txt, true, Date.now()); incMsg();
   });
 }
@@ -477,8 +481,38 @@ function clearTyping() {
 }
 
 /* ═══════════════════════════════════════════════
-   IMAGE SEND
+   IMAGE SEND  (max 480px JPEG 0.62 → ~40-100KB base64)
 ═══════════════════════════════════════════════ */
+const IMG_MAX = 480, IMG_Q = 0.62, CHUNK_SIZE = 180000;
+const chunkBuf = {};
+
+function sendPayload(p) {
+  if (isHost) bcast(p);
+  else { const h = peers[roomCode]; if (h && h.open) h.send(p); }
+}
+
+function sendLargeMsg(payload) {
+  const enc = payload.enc;
+  if (enc.length <= CHUNK_SIZE) { sendPayload(payload); return; }
+  const id = Math.random().toString(36).slice(2);
+  const chunks = [];
+  for (let i = 0; i < enc.length; i += CHUNK_SIZE) chunks.push(enc.slice(i, i + CHUNK_SIZE));
+  chunks.forEach((chunk, idx) => sendPayload({ ...payload, enc: chunk, _ck: { id, idx, total: chunks.length } }));
+}
+
+function tryReassemble(d) {
+  if (!d._ck) return d;
+  const { id, idx, total } = d._ck;
+  if (!chunkBuf[id]) chunkBuf[id] = { chunks: new Array(total), n: 0, base: { ...d, enc: '' } };
+  chunkBuf[id].chunks[idx] = d.enc;
+  chunkBuf[id].n++;
+  if (chunkBuf[id].n === total) {
+    const r = { ...chunkBuf[id].base, enc: chunkBuf[id].chunks.join('') };
+    delete r._ck; delete chunkBuf[id]; return r;
+  }
+  return null;
+}
+
 function handleChatImg(inp, dev) {
   const f = inp.files[0]; if (!f || !f.type.startsWith('image/')) { toast('IMAGE FILES ONLY'); return; }
   const r = new FileReader();
@@ -487,9 +521,9 @@ function handleChatImg(inp, dev) {
     img.onload = () => {
       const cv = document.createElement('canvas');
       let w = img.width, h = img.height;
-      if (w > 900 || h > 900) { if (w > h) { h = Math.round(h * 900 / w); w = 900; } else { w = Math.round(w * 900 / h); h = 900; } }
+      if (w > IMG_MAX || h > IMG_MAX) { if (w > h) { h = Math.round(h * IMG_MAX / w); w = IMG_MAX; } else { w = Math.round(w * IMG_MAX / h); h = IMG_MAX; } }
       cv.width = w; cv.height = h; cv.getContext('2d').drawImage(img, 0, 0, w, h);
-      const url = cv.toDataURL('image/jpeg', .8);
+      const url = cv.toDataURL('image/jpeg', IMG_Q);
       pendingImg = { url, name: f.name || 'image.jpg', dev };
       if (dev === 'd') {
         $('d-imgpre-thumb').src = url; se('d-imgpre-name', f.name || 'image.jpg');
