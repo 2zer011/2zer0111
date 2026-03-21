@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ASCII·LENS v3</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&family=Barlow:wght@300;400;600&display=swap');
+
+:root {
+  --bg:#080810; --s1:#0f0f1a; --s2:#161624; --s3:#1e1e2e;
+  --b1:#252538; --b2:#323248;
+  --ac:#00ffc8; --ac2:#ff4d6d; --ac3:#a78bfa; --ac4:#fbbf24;
+  --txt:#e2e2f0; --mut:#5a5a7a; --mut2:#8a8aaa;
+  --glow:0 0 18px rgba(0,255,200,.3);
+  --r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'Barlow',sans-serif;min-height:100dvh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 4px);pointer-events:none;z-index:9999}
+body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,255,200,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,200,.025) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0}
+
+.wrap{position:relative;z-index:1;max-width:500px;margin:0 auto;padding:14px 14px 90px}
+
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 14px;border-bottom:1px solid var(--b1);margin-bottom:18px}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:5px;color:var(--ac);text-shadow:var(--glow);line-height:1}
+.logo b{color:var(--ac2)}
+.ver{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--mut);text-align:right;line-height:1.8}
+.badge{background:rgba(0,255,200,.08);border:1px solid rgba(0,255,200,.2);border-radius:20px;padding:2px 8px;font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--ac);letter-spacing:1px}
+
+/* UPLOAD */
+.drop{border:1.5px dashed var(--b2);border-radius:var(--r);background:var(--s1);padding:28px 16px;text-align:center;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;margin-bottom:14px}
+.drop.over{border-color:var(--ac);background:rgba(0,255,200,.04)}
+.drop::before{content:'';position:absolute;top:-60%;left:-60%;width:220%;height:220%;background:conic-gradient(from 0deg,transparent,rgba(0,255,200,.04) 60deg,transparent 120deg);animation:rot 10s linear infinite;opacity:0;transition:opacity .3s}
+.drop:hover::before,.drop.over::before{opacity:1}
+@keyframes rot{to{transform:rotate(360deg)}}
+.drop-ico{font-size:2.2rem;display:block;margin-bottom:10px}
+.drop-t{font-family:'Share Tech Mono',monospace;font-size:.8rem;color:var(--ac);letter-spacing:2px;margin-bottom:5px}
+.drop-s{font-size:.72rem;color:var(--mut2)}
+input[type=file]{display:none}
+
+.prev{display:none;position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--b1);margin-bottom:14px;background:var(--s1)}
+.prev img{width:100%;display:block;max-height:180px;object-fit:contain}
+.prev-info{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.75);border:1px solid var(--b1);border-radius:6px;padding:3px 9px;font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--mut2)}
+.prev-change{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.8);border:1px solid var(--ac);border-radius:6px;color:var(--ac);padding:5px 12px;font-family:'Share Tech Mono',monospace;font-size:.65rem;cursor:pointer}
+
+/* ACCORDION */
+.acc{margin-bottom:10px;border:1px solid var(--b1);border-radius:var(--r);overflow:hidden}
+.acc-h{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--s2);cursor:pointer;user-select:none}
+.acc-h:hover{background:var(--s3)}
+.acc-t{font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--ac);letter-spacing:2px}
+.acc-arr{color:var(--mut);transition:transform .25s;font-size:.8rem}
+.acc.open .acc-arr{transform:rotate(180deg)}
+.acc-b{display:none;padding:14px;background:var(--s1);border-top:1px solid var(--b1)}
+.acc.open .acc-b{display:block}
+
+/* LABEL */
+.lbl{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--mut2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between}
+.lv{color:var(--ac)}
+
+/* GRID */
+.row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.row:last-child{margin-bottom:0}
+.col{flex:1;min-width:130px}
+.col-full{flex:0 0 100%}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--s3);border:1px solid var(--b1);border-radius:20px;padding:5px 11px;font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--mut2);cursor:pointer;transition:all .15s;user-select:none;white-space:nowrap}
+.chip.on{background:rgba(0,255,200,.1);border-color:var(--ac);color:var(--ac)}
+.chip:active{transform:scale(.93)}
+
+/* SLIDER */
+.sl-w{padding-bottom:2px}
+input[type=range]{width:100%;-webkit-appearance:none;height:3px;background:var(--b2);border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;background:var(--ac);border-radius:50%;box-shadow:0 0 10px rgba(0,255,200,.5);cursor:pointer}
+
+/* NUM ROW */
+.nr{display:flex;align-items:center;gap:8px;margin-top:8px}
+.nb{width:32px;height:32px;background:var(--s3);border:1px solid var(--b1);border-radius:7px;color:var(--txt);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s;user-select:none}
+.nb:active{transform:scale(.88);border-color:var(--ac)}
+input[type=number]{flex:1;background:var(--s3);border:1px solid var(--b1);border-radius:7px;color:var(--txt);font-family:'Share Tech Mono',monospace;font-size:.8rem;padding:6px 10px;text-align:center;outline:none;-moz-appearance:textfield}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+input[type=number]:focus{border-color:var(--ac)}
+
+/* TOGGLE */
+.tr{display:flex;align-items:center;justify-content:space-between;padding:5px 0}
+.tl{font-family:'Share Tech Mono',monospace;font-size:.68rem;color:var(--txt)}
+.tl small{display:block;font-size:.58rem;color:var(--mut2);margin-top:2px}
+.tog{width:44px;height:24px;background:var(--b2);border-radius:12px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;border:1px solid var(--b2)}
+.tog.on{background:rgba(0,255,200,.2);border-color:var(--ac)}
+.tog::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;background:var(--mut);border-radius:50%;transition:all .2s}
+.tog.on::after{left:23px;background:var(--ac);box-shadow:0 0 7px rgba(0,255,200,.7)}
+
+.div{height:1px;background:var(--b1);margin:10px 0}
+
+/* COLOR PICKER */
+input[type=color]{width:36px;height:28px;border-radius:6px;border:1px solid var(--b1);padding:2px;background:var(--s3);cursor:pointer;vertical-align:middle}
+
+/* CUSTOM INPUT */
+.cinp{width:100%;background:var(--s3);border:1px solid var(--b1);border-radius:8px;color:var(--ac);font-family:'Share Tech Mono',monospace;font-size:.75rem;padding:8px 12px;outline:none;margin-top:8px}
+.cinp:focus{border-color:var(--ac)}
+.cinp::placeholder{color:var(--mut);font-size:.65rem}
+.csprev{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--mut2);margin-top:5px;word-break:break-all;line-height:1.6}
+
+/* GEN BTN */
+.gen{width:100%;padding:15px;background:linear-gradient(135deg,rgba(0,255,200,.12),rgba(0,255,200,.04));border:1.5px solid var(--ac);border-radius:var(--r);color:var(--ac);font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:4px;cursor:pointer;transition:all .2s;display:none;margin-bottom:8px;overflow:hidden}
+.gen:active{transform:scale(.98)}
+.gen.loading{opacity:.6;cursor:not-allowed;animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:.95}}
+
+/* PROGRESS */
+.prog{width:100%;height:3px;background:var(--b1);border-radius:2px;margin-bottom:12px;overflow:hidden;display:none}
+.pf{height:100%;background:linear-gradient(90deg,var(--ac),var(--ac3));border-radius:2px;transition:width .08s}
+
+/* OUTPUT */
+.out{display:none;margin-bottom:16px}
+.out-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.out-t{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:3px;color:var(--ac2)}
+.arow{display:flex;gap:6px;flex-wrap:wrap}
+.ab{background:var(--s2);border:1px solid var(--b1);border-radius:7px;color:var(--txt);padding:6px 12px;font-family:'Share Tech Mono',monospace;font-size:.62rem;cursor:pointer;transition:all .14s}
+.ab:hover{border-color:var(--ac);color:var(--ac)}
+.ab:active{transform:scale(.94)}
+
+.zbar{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.zb{background:var(--s2);border:1px solid var(--b1);border-radius:6px;width:30px;height:30px;color:var(--txt);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.zb:active{transform:scale(.87);border-color:var(--ac)}
+.zlbl{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--mut2);flex:1;text-align:center}
+
+.stats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.stat{background:var(--s2);border:1px solid var(--b1);border-radius:7px;padding:5px 10px;font-family:'Share Tech Mono',monospace;font-size:.58rem;color:var(--mut2);flex:1;text-align:center;min-width:60px}
+.stat b{display:block;color:var(--ac);font-size:.72rem;margin-bottom:1px}
+
+.aw{background:#04040a;border:1px solid var(--b1);border-radius:var(--r);padding:10px;overflow:auto;max-height:65vh}
+#ao{font-family:'Share Tech Mono',monospace;font-size:6px;line-height:1.1;white-space:pre;display:block;letter-spacing:.3px}
+
+/* TOAST */
+.toast{position:fixed;bottom:74px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--s2);border:1px solid var(--ac);border-radius:8px;padding:9px 18px;font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--ac);opacity:0;transition:all .28s;pointer-events:none;z-index:9000;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{border-color:var(--ac2);color:var(--ac2)}
+
+/* BOTTOM */
+.bot{position:fixed;bottom:0;left:0;right:0;background:rgba(8,8,16,.96);border-top:1px solid var(--b1);padding:10px 20px;display:flex;align-items:center;justify-content:center;gap:7px;backdrop-filter:blur(12px);z-index:100}
+.bot span{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--mut)}
+.dot{width:4px;height:4px;border-radius:50%;background:var(--ac);animation:blink 2.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.1}}
+
+canvas{display:none}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--s1)}
+::-webkit-scrollbar-thumb{background:var(--b2);border-radius:4px}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<div class="wrap">
+
+<!-- HEADER -->
+<header>
+  <div>
+    <div class="logo">ASCII<b>·</b>LENS</div>
+    <div style="margin-top:5px"><span class="badge">v3.0 EXPANDED</span></div>
+  </div>
+  <div class="ver">IMAGE → CHARACTER ART<br>FULL CONTROL BUILD</div>
+</header>
+
+<!-- UPLOAD -->
+<div class="drop" id="drop" onclick="document.getElementById('fi').click()">
+  <span class="drop-ico">⬡</span>
+  <div class="drop-t">// TẢI HÌNH LÊN //</div>
+  <div class="drop-s">Nhấn để chọn · Kéo thả ảnh vào đây</div>
+</div>
+<input type="file" id="fi" accept="image/*">
+
+<div class="prev" id="prev">
+  <img id="pimg" src="" alt="">
+  <div class="prev-info" id="pinfo">—</div>
+  <button class="prev-change" onclick="document.getElementById('fi').click()">ĐỔI ẢNH</button>
+</div>
+
+<!-- ░░░ ACCORDION: KÝ TỰ ░░░ -->
+<div class="acc open" id="a-cs">
+  <div class="acc-h" onclick="tog_acc('a-cs')"><span class="acc-t">⌨ BỘ KÝ TỰ</span><span class="acc-arr">▼</span></div>
+  <div class="acc-b">
+    <div class="row"><div class="col-full">
+      <div class="lbl">PRESET</div>
+      <div class="chips" id="cs-chips">
+        <div class="chip on" data-cs="standard">Standard</div>
+        <div class="chip" data-cs="classic">Classic</div>
+        <div class="chip" data-cs="dense">Dense</div>
+        <div class="chip" data-cs="blocks">Blocks ░▒</div>
+        <div class="chip" data-cs="braille">Braille ⠿</div>
+        <div class="chip" data-cs="symbols">Symbols</div>
+        <div class="chip" data-cs="minimal">Minimal</div>
+        <div class="chip" data-cs="binary">Binary 01</div>
+        <div class="chip" data-cs="matrix">Matrix カ</div>
+        <div class="chip" data-cs="roman">Roman I·V</div>
+        <div class="chip" data-cs="math">Math ∑∞</div>
+        <div class="chip" data-cs="arrows">Arrows →↑</div>
+        <div class="chip" data-cs="circuit">Circuit ─│</div>
+        <div class="chip" data-cs="stars">Stars ✦</div>
+        <div class="chip" data-cs="dots">Dots ·•</div>
+        <div class="chip" data-cs="letters">Letters</div>
+        <div class="chip" data-cs="digits">Digits 0-9</div>
+        <div class="chip" data-cs="custom">✎ Custom</div>
+      </div>
+      <div id="cc-wrap" style="display:none">
+        <input class="cinp" id="cc-inp" type="text" placeholder="Ký tự tối → sáng (vd:  .:-=+*#@$)">
+        <div class="csprev" id="cc-prev"></div>
+      </div>
+    </div></div>
+    <div class="row"><div class="col-full">
+      <div class="lbl">CHIỀU ÁNH SÁNG</div>
+      <div class="chips" id="dir-chips">
+        <div class="chip on" data-dir="d2l">Tối → Sáng</div>
+        <div class="chip" data-dir="l2d">Sáng → Tối</div>
+        <div class="chip" data-dir="wave">Wave ~</div>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ░░░ ACCORDION: KÍCH THƯỚC ░░░ -->
+<div class="acc open" id="a-sz">
+  <div class="acc-h" onclick="tog_acc('a-sz')"><span class="acc-t">⊞ KÍCH THƯỚC & ĐỘ CHI TIẾT</span><span class="acc-arr">▼</span></div>
+  <div class="acc-b">
+
+    <div class="row"><div class="col-full">
+      <div class="lbl">SỐ CỘT (ĐỘ RỘNG) <span class="lv" id="cols-v">100</span></div>
+      <div class="sl-w"><input type="range" id="cols-sl" min="20" max="400" value="100" step="5" oninput="slSync(this,'cols-inp','cols-v',' cols');S.cols=+this.value;tl()"></div>
+      <div class="nr">
+        <div class="nb" onclick="nadj('cols-inp',-10);S.cols=+document.getElementById('cols-inp').value;slFromInp('cols-inp','cols-sl','cols-v',' cols');tl()">−</div>
+        <input type="number" id="cols-inp" value="100" min="20" max="400" oninput="slFromInp(this.id,'cols-sl','cols-v',' cols');S.cols=+this.value;tl()">
+        <div class="nb" onclick="nadj('cols-inp',10);S.cols=+document.getElementById('cols-inp').value;slFromInp('cols-inp','cols-sl','cols-v',' cols');tl()">+</div>
+      </div>
+    </div></div>
+
+    <div class="div"></div>
+
+    <div class="row">
+      <div class="col">
+        <div class="lbl">FONT SIZE <span class="lv" id="fs-v">6px</span></div>
+        <div class="sl-w"><input type="range" id="fs-sl" min="2" max="28" value="6" oninput="slSync(this,'fs-inp','fs-v','px');S.fs=+this.value;afs();tl()"></div>
+        <div class="nr">
+          <div class="nb" onclick="nadj('fs-inp',-1);S.fs=+document.getElementById('fs-inp').value;slFromInp('fs-inp','fs-sl','fs-v','px');afs();tl()">−</div>
+          <input type="number" id="fs-inp" value="6" min="2" max="28" oninput="slFromInp(this.id,'fs-sl','fs-v','px');S.fs=+this.value;afs();tl()">
+          <div class="nb" onclick="nadj('fs-inp',1);S.fs=+document.getElementById('fs-inp').value;slFromInp('fs-inp','fs-sl','fs-v','px');afs();tl()">+</div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="lbl">LINE HEIGHT <span class="lv" id="lh-v">1.1</span></div>
+        <div class="sl-w"><input type="range" id="lh-sl" min="8" max="22" value="11" oninput="lhSync(this.value)"></div>
+        <div class="nr">
+          <div class="nb" onclick="lhAdj(-1)">−</div>
+          <input type="number" id="lh-inp" value="1.1" min="0.7" max="2.2" step="0.1" oninput="lhFromInp()">
+          <div class="nb" onclick="lhAdj(1)">+</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="lbl">LETTER SPACING <span class="lv" id="ls-v">0px</span></div>
+        <div class="sl-w"><input type="range" id="ls-sl" min="-2" max="10" value="0" step="0.5" oninput="S.ls=+this.value;document.getElementById('ls-v').textContent=this.value+'px';afs();tl()"></div>
+      </div>
+      <div class="col">
+        <div class="lbl">CHAR RATIO <span class="lv" id="cr-v">0.55</span></div>
+        <div class="sl-w"><input type="range" id="cr-sl" min="30" max="100" value="55" oninput="S.cr=this.value/100;document.getElementById('cr-v').textContent=S.cr.toFixed(2);tl()"></div>
+      </div>
+    </div>
+
+    <div class="div"></div>
+    <div class="row"><div class="col-full">
+      <div class="lbl">PRESET NHANH</div>
+      <div class="chips">
+        <div class="chip" onclick="qs(40,10)">Tiny 40</div>
+        <div class="chip" onclick="qs(80,7)">Small 80</div>
+        <div class="chip" onclick="qs(120,6)">Medium 120</div>
+        <div class="chip" onclick="qs(180,4)">Large 180</div>
+        <div class="chip" onclick="qs(250,3)">HD 250</div>
+        <div class="chip" onclick="qs(350,2)">4K 350</div>
+        <div class="chip" onclick="qs(500,1)">MAX 500</div>
+      </div>
+    </div></div>
+
+  </div>
+</div>
+
+<!-- ░░░ ACCORDION: MÀU SẮC ░░░ -->
+<div class="acc open" id="a-col">
+  <div class="acc-h" onclick="tog_acc('a-col')"><span class="acc-t">🎨 MÀU SẮC & NỀN</span><span class="acc-arr">▼</span></div>
+  <div class="acc-b">
+
+    <div class="row"><div class="col-full">
+      <div class="lbl">MÀU KÝ TỰ (FOREGROUND)</div>
+      <div class="chips" id="fg-chips">
+        <div class="chip on" data-fg="green">Xanh lá</div>
+        <div class="chip" data-fg="cyan">Cyan</div>
+        <div class="chip" data-fg="red">Đỏ</div>
+        <div class="chip" data-fg="orange">Cam</div>
+        <div class="chip" data-fg="yellow">Vàng</div>
+        <div class="chip" data-fg="blue">Xanh dương</div>
+        <div class="chip" data-fg="purple">Tím</div>
+        <div class="chip" data-fg="pink">Hồng</div>
+        <div class="chip" data-fg="gold">Vàng kim</div>
+        <div class="chip" data-fg="white">Trắng</div>
+        <div class="chip" data-fg="full">🌈 Full màu</div>
+        <div class="chip" data-fg="grayscale">Grayscale</div>
+        <div class="chip" data-fg="sepia">Sepia</div>
+        <div class="chip" data-fg="neon">Neon Mix</div>
+        <div class="chip" data-fg="cfg">✎ Custom</div>
+      </div>
+      <div id="cfg-wrap" style="display:none;margin-top:8px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <input type="color" id="cfg-inp" value="#00ffc8" oninput="updateCfg()">
+          <span style="font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--mut2)">Màu chữ tùy chỉnh</span>
+        </div>
+      </div>
+    </div></div>
+
+    <div class="div"></div>
+
+    <div class="row"><div class="col-full">
+      <div class="lbl">MÀU NỀN (BACKGROUND)</div>
+      <div class="chips" id="bg-chips">
+        <div class="chip on" data-bg="black">Đen</div>
+        <div class="chip" data-bg="dark">Tối</div>
+        <div class="chip" data-bg="gray">Xám</div>
+        <div class="chip" data-bg="white">Trắng</div>
+        <div class="chip" data-bg="terminal">Terminal</div>
+        <div class="chip" data-bg="navy">Navy</div>
+        <div class="chip" data-bg="maroon">Maroon</div>
+        <div class="chip" data-bg="forest">Forest</div>
+        <div class="chip" data-bg="trans">Trong suốt</div>
+        <div class="chip" data-bg="cbg">✎ Custom</div>
+      </div>
+      <div id="cbg-wrap" style="display:none;margin-top:8px">
+        <input type="color" id="cbg-inp" value="#050508" oninput="S.bgColor=this.value;tl()">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:.65rem;color:var(--mut2);margin-left:10px">Màu nền</span>
+      </div>
+    </div></div>
+
+    <div class="div"></div>
+
+    <div class="row"><div class="col-full">
+      <div class="lbl">GRADIENT OVERLAY</div>
+      <div class="chips" id="gr-chips">
+        <div class="chip on" data-gr="none">Tắt</div>
+        <div class="chip" data-gr="top">Trên↓Dưới</div>
+        <div class="chip" data-gr="left">Trái→Phải</div>
+        <div class="chip" data-gr="diag">Chéo↘</div>
+        <div class="chip" data-gr="radial">Tâm ○</div>
+        <div class="chip" data-gr="rainbow">🌈 Rainbow</div>
+        <div class="chip" data-gr="fire">🔥 Fire</div>
+        <div class="chip" data-gr="ocean">🌊 Ocean</div>
+      </div>
+      <div id="gr-colors" style="display:none;flex-wrap:wrap;gap:12px;margin-top:10px;align-items:center">
+        <div><div class="lbl" style="margin-bottom:4px">Màu 1</div><input type="color" id="gc1" value="#00ffc8" oninput="tl()"></div>
+        <div><div class="lbl" style="margin-bottom:4px">Màu 2</div><input type="color" id="gc2" value="#ff4d6d" oninput="tl()"></div>
+      </div>
+    </div></div>
+
+    <div class="div"></div>
+
+    <div class="row">
+      <div class="col">
+        <div class="lbl">OPACITY KÝ TỰ <span class="lv" id="op-v">100%</span></div>
+        <div class="sl-w"><input type="range" id="op-sl" min="10" max="100" value="100" oninput="S.opacity=+this.value/100;document.getElementById('op-v').textContent=this.value+'%';tl()"></div>
+      </div>
+      <div class="col">
+        <div class="lbl">GLOW EFFECT <span class="lv" id="glow-v">0</span></div>
+        <div class="sl-w"><input type="range" id="glow-sl" min="0" max="10" value="0" oninput="S.glow=+this.value;document.getElementById('glow-v').textContent=this.value;tl()"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ░░░ ACCORDION: XỬ LÝ ẢNH ░░░ -->
+<div class="acc" id="a-img">
+  <div class="acc-h" onclick="tog_acc('a-img')"><span class="acc-t">⚙ XỬ LÝ ẢNH (PREPROCESSING)</span><span class="acc-arr">▼</span></div>
+  <div class="acc-b">
+
+    <div class="row">
+      <div class="col">
+        <div class="lbl">ĐỘ SÁNG <span class="lv" id="br-v">0</span></div>
+        <div class="sl-w"><input type="range" id="br-sl" min="-100" max="100" value="0" oninput="S.bright=+this.value;document.getElementById('br-v').textContent=this.value;tl()"></div>
+      </div>
+      <div class="col">
+        <div class="lbl">CONTRAST <span class="lv" id="ct-v">0</span></div>
+        <div class="sl-w"><input type="range" id="ct-sl" min="-100" max="100" value="0" oninput="S.contrast=+this.value;document.getElementById('ct-v').textContent=this.value;tl()"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="lbl">GAMMA <span class="lv" id="gm-v">1.0</span></div>
+        <div class="sl-w"><input type="range" id="gm-sl" min="3" max="40" value="10" oninput="S.gamma=this.value/10;document.getElementById('gm-v').textContent=S.gamma.toFixed(1);tl()"></div>
+      </div>
+      <div class="col">
+        <div class="lbl">SHARPEN <span class="lv" id="sh-v">0</span></div>
+        <div class="sl-w"><input type="range" id="sh-sl" min="0" max="8" value="0" oninput="S.sharp=+this.value;document.getElementById('sh-v').textContent=this.value;tl()"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <div class="lbl">BLUR <span class="lv" id="bl-v">0</span></div>
+        <div class="sl-w"><input type="range" id="bl-sl" min="0" max="5" value="0" oninput="S.blur=+this.value;document.getElementById('bl-v').textContent=this.value;tl()"></div>
+      </div>
+      <div class="col">
+        <div class="lbl">SATURATION <span class="lv" id="sa-v">100%</span></div>
+        <div class="sl-w"><input type="range" id="sa-sl" min="0" max="300" value="100" oninput="S.sat=+this.value;document.getElementById('sa-v').textContent=this.value+'%';tl()"></div>
+      </div>
+    </div>
+
+    <div class="div"></div>
+
+    <div class="row"><div class="col-full">
+      <div class="lbl">KÊNH LUMINANCE</div>
+      <div class="chips" id="lm-chips">
+        <div class="chip on" data-lm="lum">Luminance</div>
+        <div class="chip" data-lm="avg">Average</div>
+        <div class="chip" data-lm="r">R Channel</div>
+        <div class="chip" data-lm="g">G Channel</div>
+        <div class="chip" data-lm="b">B Channel</div>
+        <div class="chip" data-lm="max">Max RGB</div>
+        <div class="chip" data-lm="min">Min RGB</div>
+        <div class="chip" data-lm="val">HSV Value</div>
+      </div>
+    </div></div>
+
+    <div class="div"></div>
+
+    <div class="row"><div class="col-full">
+      <div class="lbl">DITHERING</div>
+      <div class="chips" id="dt-chips">
+        <div class="chip on" data-dt="none">Tắt</div>
+        <div class="chip" data-dt="floyd">Floyd-Steinberg</div>
+        <div class="chip" data-dt="atkinson">Atkinson</div>
+        <div class="chip" data-dt="ordered">Ordered 4×4</div>
+        <div class="chip" data-dt="random">Random</div>
+        <div class="chip" data-dt="stucki">Stucki</div>
+      </div>
+    </div></div>
+
+    <div class="div"></div>
+
+    <div class="row"><div class="col-full">
+      <div class="lbl">CHẾ ĐỘ ĐẶC BIỆT</div>
+      <div class="chips" id="md-chips">
+        <div class="chip on" data-md="normal">Normal</div>
+        <div class="chip" data-md="edge">Edge Detect</div>
+        <div class="chip" data-md="emboss">Emboss</div>
+        <div class="chip" data-md="threshold">Threshold</div>
+        <div class="chip" data-md="posterize">Posterize</div>
+        <div class="chip" data-md="halftone">Halftone</div>
+      </div>
+      <div id="thr-w" style="display:none;margin-top:8px">
+        <div class="lbl">THRESHOLD <span class="lv" id="thr-v">128</span></div>
+        <input type="range" id="thr-sl" min="0" max="255" value="128" oninput="S.thresh=+this.value;document.getElementById('thr-v').textContent=this.value;tl()">
+      </div>
+      <div id="pos-w" style="display:none;margin-top:8px">
+        <div class="lbl">LEVELS <span class="lv" id="pos-v">4</span></div>
+        <input type="range" id="pos-sl" min="2" max="16" value="4" oninput="S.poster=+this.value;document.getElementById('pos-v').textContent=this.value;tl()">
+      </div>
+    </div></div>
+
+  </div>
+</div>
+
+<!-- ░░░ ACCORDION: NÂNG CAO ░░░ -->
+<div class="acc" id="a-adv">
+  <div class="acc-h" onclick="tog_acc('a-adv')"><span class="acc-t">◈ BIẾN ĐỔI & NÂNG CAO</span><span class="acc-arr">▼</span></div>
+  <div class="acc-b">
+
+    <div class="tr">
+      <div><div class="tl">ĐẢO NGƯỢC SÁNG/TỐI (Invert)</div><small class="tl" style="color:var(--mut2)">Tối thành sáng và ngược lại</small></div>
+      <div class="tog" id="t-inv" onclick="togS('inv','t-inv')"></div>
+    </div>
+    <div class="div"></div>
+    <div class="tr">
+      <div><div class="tl">SỬA TỈ LỆ KÝ TỰ (Fix Ratio)</div><small class="tl" style="color:var(--mut2)">Bù trừ chiều cao/rộng monospace</small></div>
+      <div class="tog on" id="t-ratio" onclick="togS('ratio','t-ratio')"></div>
+    </div>
+    <div class="div"></div>
+    <div class="tr">
+      <div><div class="tl">LIVE PREVIEW (Xem trước)</div><small class="tl" style="color:var(--mut2)">Tự động render khi thay đổi</small></div>
+      <div class="tog" id="t-live" onclick="togS('live','t-live')"></div>
+    </div>
+    <div class="div"></div>
+    <div class="tr">
+      <div><div class="tl">BOLD CHARACTERS</div><small class="tl" style="color:var(--mut2)">In đậm tất cả ký tự</small></div>
+      <div class="tog" id="t-bold" onclick="togS('bold','t-bold')"></div>
+    </div>
+    <div class="div"></div>
+    <div class="tr">
+      <div><div class="tl">OUTLINE MODE (Chỉ viền)</div><small class="tl" style="color:var(--mut2)">Hiển thị ký tự ở vùng cạnh</small></div>
+      <div class="tog" id="t-outline" onclick="togS('outline','t-outline')"></div>
+    </div>
+
+    <div class="div"></div>
+
+    <div class="row"><div class="col-full">
+      <div class="lbl">XOAY ẢNH</div>
+      <div class="chips" id="rot-chips">
+        <div class="chip on" data-rot="0">0°</div>
+        <div class="chip" data-rot="90">90°</div>
+        <div class="chip" data-rot="180">180°</div>
+        <div class="chip" data-rot="270">270°</div>
+      </div>
+    </div></div>
+
+    <div class="row"><div class="col-full">
+      <div class="lbl">FLIP (Lật ảnh)</div>
+      <div class="chips" id="flip-chips">
+        <div class="chip on" data-fl="none">Không</div>
+        <div class="chip" data-fl="h">↔ Ngang</div>
+        <div class="chip" data-fl="v">↕ Dọc</div>
+        <div class="chip" data-fl="both">↔↕ Cả hai</div>
+      </div>
+    </div></div>
+
+    <div class="div"></div>
+
+    <div class="row"><div class="col-full">
+      <div class="lbl">CẮT ẢNH (CROP) — % từ góc trên trái</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div>
+          <div class="lbl">X bắt đầu <span class="lv" id="cx-v">0%</span></div>
+          <input type="range" id="cx-sl" min="0" max="90" value="0" oninput="S.cx=+this.value;document.getElementById('cx-v').textContent=this.value+'%';tl()">
+        </div>
+        <div>
+          <div class="lbl">Y bắt đầu <span class="lv" id="cy-v">0%</span></div>
+          <input type="range" id="cy-sl" min="0" max="90" value="0" oninput="S.cy=+this.value;document.getElementById('cy-v').textContent=this.value+'%';tl()">
+        </div>
+        <div>
+          <div class="lbl">% Rộng <span class="lv" id="cw-v">100%</span></div>
+          <input type="range" id="cw-sl" min="10" max="100" value="100" oninput="S.cw=+this.value;document.getElementById('cw-v').textContent=this.value+'%';tl()">
+        </div>
+        <div>
+          <div class="lbl">% Cao <span class="lv" id="ch-v">100%</span></div>
+          <input type="range" id="ch-sl" min="10" max="100" value="100" oninput="S.ch=+this.value;document.getElementById('ch-v').textContent=this.value+'%';tl()">
+        </div>
+      </div>
+    </div></div>
+
+    <div class="div"></div>
+    <div class="row"><div class="col-full">
+      <div class="lbl">ĐẦU RA (OUTPUT FORMAT)</div>
+      <div class="chips" id="fmt-chips">
+        <div class="chip on" data-fmt="html">Colored HTML</div>
+        <div class="chip" data-fmt="plain">Plain Text</div>
+        <div class="chip" data-fmt="ansi">ANSI Color</div>
+      </div>
+    </div></div>
+
+  </div>
+</div>
+
+<!-- ░░░ GENERATE ░░░ -->
+<button class="gen" id="gen-btn" onclick="generate()">⬡ TẠO ASCII ART ⬡</button>
+<div class="prog" id="prog"><div class="pf" id="pf" style="width:0%"></div></div>
+
+<!-- ░░░ OUTPUT ░░░ -->
+<div class="out" id="out-sec">
+  <div class="out-hdr">
+    <div class="out-t">// OUTPUT</div>
+    <div class="arow">
+      <button class="ab" onclick="doCopy()">COPY</button>
+      <button class="ab" onclick="doTxt()">TXT</button>
+      <button class="ab" onclick="doHtml()">HTML</button>
+      <button class="ab" onclick="doPng()">PNG</button>
+    </div>
+  </div>
+  <div class="stats">
+    <div class="stat"><b id="st-c">—</b>COLS</div>
+    <div class="stat"><b id="st-r">—</b>ROWS</div>
+    <div class="stat"><b id="st-ch">—</b>CHARS</div>
+    <div class="stat"><b id="st-t">—</b>MS</div>
+  </div>
+  <div class="zbar">
+    <div class="zb" onclick="za(-1)">−</div>
+    <span class="zlbl" id="zlbl">FONT: 6px</span>
+    <div class="zb" onclick="za(1)">+</div>
+    <div class="zb" style="width:auto;padding:0 10px;font-family:'Share Tech Mono',monospace;font-size:.6rem" onclick="zr()">RESET</div>
+  </div>
+  <div class="aw" id="aw"><pre id="ao"></pre></div>
+</div>
+
+</div>
+
+<div class="bot"><div class="dot"></div><span>ASCII·LENS v3 — IMAGE TO CHARACTER ART — FULL CONTROL</span><div class="dot"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══ CHARSETS ═══ */
+const CS = {
+  standard: " .'`^\",:;Il!i><~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$",
+  classic:  " `.-':_,^=;><+!rc*/z?sLTv)J7(|Fi{C}fI31tlu[neoZ5Yxjya]2ESwqkP6h9d4VpOGbUAKXHm8RD#$Bg0MNWQ%&@",
+  dense:    " ░▒▓█",
+  blocks:   " ░▒▓█▀▄▌▐■□▪▫●",
+  braille:  " ⠁⠂⠃⠄⠅⠆⠇⠈⠉⠊⠋⠌⠍⠎⠏⠐⠑⠒⠓⠔⠕⠖⠗⠘⠙⠚⠛⠜⠝⠞⠟⠠⠡⠢⠣⠤⠥⠦⠧⠨⠩⠪⠫⠬⠭⠮⠯⠰⠱⠲⠳⠴⠵⠶⠷⠸⠹⠺⠻⠼⠽⠾⠿",
+  symbols:  " .-~:;=+!?/\\|()[]{}^*#%@&",
+  minimal:  " .:|@",
+  binary:   " 01",
+  matrix:   " ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ01",
+  roman:    " ·IiVvXxLlCcDdMm",
+  math:     " ·+-=÷×∑∏∫∂∇∞≈≠≤≥∈∉⊂⊃∪∩",
+  arrows:   " ·→←↑↓↗↘↙↖↔↕⇒⇐⇑⇓⇔►◄▲▼",
+  circuit:  " ·─│┌┐└┘├┤┬┴┼═║╔╗╚╝╠╣╦╩╬",
+  stars:    " ·✦✧✩✪★☆✫✬✭✮✯✰⋆⊹",
+  dots:     " ·•●◉⊙◎○◦",
+  letters:  " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+  digits:   " 0123456789",
+};
+
+/* ═══ FG COLOR FUNCTIONS (r,g,b,brightness) → css color ═══ */
+const FG = {
+  green:    (r,g,b,v)=>`rgb(0,${~~(160+v*95)},${~~(v*60)})`,
+  cyan:     (r,g,b,v)=>`rgb(0,${~~(180+v*75)},${~~(180+v*75)})`,
+  red:      (r,g,b,v)=>`rgb(${~~(160+v*95)},${~~(v*40)},${~~(v*40)})`,
+  orange:   (r,g,b,v)=>`rgb(${~~(200+v*55)},${~~(80+v*120)},0)`,
+  yellow:   (r,g,b,v)=>`rgb(${~~(180+v*75)},${~~(180+v*75)},0)`,
+  blue:     (r,g,b,v)=>`rgb(0,${~~(v*80)},${~~(160+v*95)})`,
+  purple:   (r,g,b,v)=>`rgb(${~~(100+v*100)},0,${~~(160+v*95)})`,
+  pink:     (r,g,b,v)=>`rgb(${~~(200+v*55)},${~~(v*80)},${~~(140+v*115)})`,
+  gold:     (r,g,b,v)=>`rgb(${~~(180+v*75)},${~~(140+v*80)},0)`,
+  white:    (r,g,b,v)=>`rgb(${~~(v*255)},${~~(v*255)},${~~(v*255)})`,
+  full:     (r,g,b,v)=>`rgb(${r},${g},${b})`,
+  grayscale:(r,g,b,v)=>{const x=~~(v*255);return`rgb(${x},${x},${x})`},
+  sepia:    (r,g,b,v)=>`rgb(${~~(v*220)},${~~(v*180)},${~~(v*120)})`,
+  neon:     (r,g,b,v)=>`hsl(${~~(v*280)},100%,${20+~~(v*60)}%)`,
+  cfg:      null,
+};
+
+const BG_MAP = {
+  black:'#000000', dark:'#080810', gray:'#282828', white:'#f8f8f0',
+  terminal:'#001200', navy:'#000820', maroon:'#150005', forest:'#001508',
+  trans:'transparent',
+};
+
+/* ═══ STATE ═══ */
+const S = {
+  cs:'standard', ccInp:'', dir:'d2l',
+  cols:100, fs:6, lh:1.1, ls:0, cr:0.55,
+  fg:'green', bg:'black', bgColor:'#000000',
+  grad:'none', gc1:'#00ffc8', gc2:'#ff4d6d',
+  opacity:1, glow:0,
+  lm:'lum', dt:'none', md:'normal', thresh:128, poster:4,
+  bright:0, contrast:0, gamma:1.0, sharp:0, blur:0, sat:100,
+  inv:false, ratio:true, live:false, bold:false, outline:false,
+  rot:0, fl:'none',
+  cx:0, cy:0, cw:100, ch:100,
+  fmt:'html',
+};
+
+let IMG=null, lastPlain='', lastHtml='', liveT=null;
+
+/* ═══ ACCORDION ═══ */
+function tog_acc(id){document.getElementById(id).classList.toggle('open')}
+
+/* ═══ UPLOAD ═══ */
+const drop=document.getElementById('drop');
+const fi=document.getElementById('fi');
+drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('over')});
+drop.addEventListener('dragleave',()=>drop.classList.remove('over'));
+drop.addEventListener('drop',e=>{e.preventDefault();drop.classList.remove('over');const f=e.dataTransfer.files[0];if(f)loadFile(f)});
+fi.addEventListener('change',e=>{if(e.target.files[0])loadFile(e.target.files[0])});
+
+function loadFile(f){
+  const rd=new FileReader();
+  rd.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{
+      IMG=img;
+      document.getElementById('pimg').src=ev.target.result;
+      document.getElementById('pinfo').textContent=`${img.width}×${img.height}  ${(f.size/1024).toFixed(1)}KB`;
+      document.getElementById('prev').style.display='block';
+      drop.style.display='none';
+      document.getElementById('gen-btn').style.display='block';
+    };
+    img.src=ev.target.result;
+  };
+  rd.readAsDataURL(f);
+}
+
+/* ═══ CHIP BINDER ═══ */
+function bindChips(cId, dataKey, cb){
+  document.querySelectorAll(`#${cId} [data-${dataKey}]`).forEach(c=>{
+    c.addEventListener('click',()=>{
+      document.querySelectorAll(`#${cId} [data-${dataKey}]`).forEach(x=>x.classList.remove('on'));
+      c.classList.add('on');
+      cb(c.dataset[dataKey]);
+    });
+  });
+}
+
+bindChips('cs-chips','cs',v=>{
+  S.cs=v;
+  document.getElementById('cc-wrap').style.display=v==='custom'?'block':'none';
+  if(v!=='custom') document.getElementById('cc-prev').textContent='';
+  tl();
+});
+bindChips('dir-chips','dir',v=>{S.dir=v;tl()});
+bindChips('fg-chips','fg',v=>{S.fg=v;document.getElementById('cfg-wrap').style.display=v==='cfg'?'block':'none';tl()});
+bindChips('bg-chips','bg',v=>{S.bg=v;document.getElementById('cbg-wrap').style.display=v==='cbg'?'block':'none';tl()});
+bindChips('lm-chips','lm',v=>{S.lm=v;tl()});
+bindChips('dt-chips','dt',v=>{S.dt=v;tl()});
+bindChips('rot-chips','rot',v=>{S.rot=parseInt(v);tl()});
+bindChips('flip-chips','fl',v=>{S.fl=v;tl()});
+bindChips('fmt-chips','fmt',v=>{S.fmt=v;tl()});
+bindChips('gr-chips','gr',v=>{
+  S.grad=v;
+  const gcw=document.getElementById('gr-colors');
+  gcw.style.display=v!=='none'&&v!=='rainbow'&&v!=='fire'&&v!=='ocean'?'flex':'none';
+  tl();
+});
+bindChips('md-chips','md',v=>{
+  S.md=v;
+  document.getElementById('thr-w').style.display=v==='threshold'?'block':'none';
+  document.getElementById('pos-w').style.display=v==='posterize'?'block':'none';
+  tl();
+});
+
+document.getElementById('cc-inp').addEventListener('input',function(){S.ccInp=this.value;document.getElementById('cc-prev').textContent='Preview: '+this.value.substring(0,60);tl()});
+document.getElementById('gc1').addEventListener('input',function(){tl()});
+document.getElementById('gc2').addEventListener('input',function(){tl()});
+
+function updateCfg(){
+  const hex=document.getElementById('cfg-inp').value;
+  const cr=parseInt(hex.slice(1,3),16),cg=parseInt(hex.slice(3,5),16),cb=parseInt(hex.slice(5,7),16);
+  FG['cfg']=(r,g,b,v)=>`rgb(${~~(cr*v)},${~~(cg*v)},${~~(cb*v)})`;
+  tl();
+}
+
+/* ═══ TOGGLES ═══ */
+function togS(key, elId){
+  S[key]=!S[key];
+  document.getElementById(elId).classList.toggle('on',S[key]);
+  if(key==='live'&&S.live) generate();
+  else tl();
+}
+
+/* ═══ SLIDER ↔ INPUT SYNC ═══ */
+function slSync(sl, inpId, valId, suf){
+  document.getElementById(inpId).value=sl.value;
+  document.getElementById(valId).textContent=sl.value+suf;
+}
+function slFromInp(inpId, slId, valId, suf){
+  const el=document.getElementById(inpId);
+  const v=Math.max(+el.min,Math.min(+el.max,+el.value||0));
+  el.value=v;
+  document.getElementById(slId).value=v;
+  document.getElementById(valId).textContent=v+suf;
+}
+function nadj(id, d){
+  const el=document.getElementById(id);
+  el.value=Math.max(+el.min,Math.min(+el.max,(+el.value||0)+d));
+}
+function lhSync(v10){
+  const v=v10/10;S.lh=v;
+  document.getElementById('lh-inp').value=v.toFixed(1);
+  document.getElementById('lh-v').textContent=v.toFixed(1);
+  afs();tl();
+}
+function lhAdj(d){
+  const el=document.getElementById('lh-sl');
+  el.value=Math.max(8,Math.min(22,+el.value+d));
+  lhSync(+el.value);
+}
+function lhFromInp(){
+  const v=parseFloat(document.getElementById('lh-inp').value)||1.1;
+  S.lh=v;
+  document.getElementById('lh-sl').value=Math.round(v*10);
+  document.getElementById('lh-v').textContent=v.toFixed(1);
+  afs();tl();
+}
+
+/* ═══ QUICK SIZE ═══ */
+function qs(cols,fs){
+  S.cols=cols;S.fs=fs;
+  ['cols-sl','cols-inp'].forEach(id=>document.getElementById(id).value=cols);
+  document.getElementById('cols-v').textContent=cols;
+  ['fs-sl','fs-inp'].forEach(id=>document.getElementById(id).value=fs);
+  document.getElementById('fs-v').textContent=fs+'px';
+  afs();tl();
+}
+
+/* ═══ APPLY FONT ═══ */
+function afs(){
+  const el=document.getElementById('ao');
+  el.style.fontSize=S.fs+'px';
+  el.style.lineHeight=S.lh;
+  el.style.letterSpacing=S.ls+'px';
+  el.style.fontWeight=S.bold?'bold':'normal';
+  if(S.glow>0) el.style.textShadow=`0 0 ${S.glow*2}px currentColor`;
+  else el.style.textShadow='none';
+  document.getElementById('zlbl').textContent=`FONT: ${S.fs}px · LH: ${S.lh}`;
+}
+
+function za(d){S.fs=Math.max(1,Math.min(30,S.fs+d));afs()}
+function zr(){S.fs=6;S.lh=1.1;S.ls=0;afs()}
+
+/* ═══ LIVE PREVIEW ═══ */
+function tl(){
+  if(!S.live) return;
+  clearTimeout(liveT);
+  liveT=setTimeout(generate,700);
+}
+
+/* ═══ PROGRESS ═══ */
+function sp(p){
+  const pr=document.getElementById('prog');
+  pr.style.display=p<100?'block':'none';
+  document.getElementById('pf').style.width=p+'%';
+}
+
+/* ═══════════════════════ GENERATE ═══════════════════════ */
+function generate(){
+  if(!IMG){showToast('Tải ảnh lên trước!','err');return}
+  const btn=document.getElementById('gen-btn');
+  btn.classList.add('loading');btn.textContent='⬡ ĐANG XỬ LÝ... ⬡';sp(5);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    try{
+      const t0=performance.now();
+      _gen();
+      document.getElementById('st-t').textContent=Math.round(performance.now()-t0);
+    }catch(e){console.error(e);showToast('Lỗi: '+e.message,'err')}
+    btn.classList.remove('loading');btn.textContent='⬡ TẠO ASCII ART ⬡';sp(100);
+  }));
+}
+
+function _gen(){
+  const cv=document.getElementById('cv');
+  const ctx=cv.getContext('2d',{willReadFrequently:true});
+
+  // Crop
+  const img=IMG;
+  const cxP=S.cx/100,cyP=S.cy/100,cwP=S.cw/100,chP=S.ch/100;
+  const sx=img.width*cxP,sy=img.height*cyP;
+  const sw=img.width*cwP,sh=img.height*chP;
+
+  const cols=S.cols;
+  const rows=Math.max(1,Math.floor((sh/sw)*cols*(S.ratio?S.cr:1.0)));
+
+  cv.width=cols;cv.height=rows;
+  ctx.save();
+
+  // Rotation
+  if(S.rot){
+    ctx.translate(cols/2,rows/2);
+    ctx.rotate(S.rot*Math.PI/180);
+    ctx.translate(-cols/2,-rows/2);
+  }
+  // Flip
+  if(S.fl==='h'||S.fl==='both'){ctx.translate(cols,0);ctx.scale(-1,1)}
+  if(S.fl==='v'||S.fl==='both'){ctx.translate(0,rows);ctx.scale(1,-1)}
+
+  // Saturation + blur via CSS filter on off-screen canvas
+  let filterStr='';
+  if(S.sat!==100) filterStr+=`saturate(${S.sat}%) `;
+  if(S.blur>0) filterStr+=`blur(${S.blur}px) `;
+  if(filterStr) ctx.filter=filterStr.trim();
+
+  ctx.drawImage(img,sx,sy,sw,sh,0,0,cols,rows);
+  ctx.restore();
+
+  let data=Array.from(ctx.getImageData(0,0,cols,rows).data);
+
+  // Sharpen
+  if(S.sharp>0) data=sharpen(data,cols,rows,S.sharp);
+
+  // Brightness/Contrast/Gamma
+  if(S.bright||S.contrast||S.gamma!==1.0) data=bcg(data,S.bright,S.contrast,S.gamma);
+
+  // Special mode pre-processing
+  if(S.md==='edge') data=edgeDetect(data,cols,rows);
+  else if(S.md==='emboss') data=emboss(data,cols,rows);
+  else if(S.md==='halftone') data=halftone(data,cols,rows);
+
+  // Charset
+  let cs=S.cs==='custom'?(S.ccInp||' .:#@'):CS[S.cs];
+  if(!cs||cs.length<2) cs=CS.standard;
+  if(S.dir==='l2d') cs=cs.split('').reverse().join('');
+  if(S.dir==='wave'){
+    const arr=cs.split('');
+    for(let i=0;i<arr.length/2;i++){const t=arr[i];arr[i]=arr[arr.length-1-i];arr[arr.length-1-i]=t}
+    cs=arr.join('');
+  }
+
+  // Error buffer for dithering
+  const errBuf=S.dt!=='none'?new Float32Array(cols*rows):null;
+
+  // Bayer 4x4 matrix for ordered dithering
+  const bayer=[[0,8,2,10],[12,4,14,6],[3,11,1,9],[15,7,13,5]];
+
+  // Gradient fn
+  const gfn=mkGrad(cols,rows);
+  const fgFn=FG[S.fg]||FG.white;
+
+  const lines=[];
+  const htmlLines=[];
+
+  for(let y=0;y<rows;y++){
+    let line='',html='';
+    for(let x=0;x<cols;x++){
+      const i=(y*cols+x)*4;
+      const r=data[i],g=data[i+1],b=data[i+2];
+      let v=getLum(r,g,b,S.lm);
+      if(S.inv) v=1-v;
+
+      // Threshold / Posterize
+      if(S.md==='threshold') v=v>S.thresh/255?1:0;
+      else if(S.md==='posterize') v=Math.round(v*(S.poster-1))/(S.poster-1);
+
+      // Dithering
+      if(errBuf){
+        if(S.dt==='ordered'){
+          const threshold=(bayer[y%4][x%4]+1)/17;
+          v=v>threshold?1:0;
+        } else {
+          v=Math.max(0,Math.min(1,v+errBuf[y*cols+x]));
+          const q=Math.round(v*(cs.length-1))/(cs.length-1);
+          ditherSpread(errBuf,x,y,cols,rows,v-q,S.dt);
+          v=q;
+        }
+      }
+
+      // Outline mode
+      let ch;
+      if(S.outline){
+        const ev=edgeSample(data,x,y,cols,rows,S.lm);
+        ch=ev>0.15?cs[Math.min(cs.length-1,~~(ev*(cs.length-1)))]:'·';
+      } else {
+        ch=cs[Math.min(cs.length-1,~~(v*(cs.length-1)))];
+      }
+      line+=ch;
+      if(ch===' '){html+=' ';continue}
+
+      const alpha=S.opacity<1?`/${~~(S.opacity*255).toString(16).padStart(2,'0')}`:'';
+      let color=S.grad!=='none'?gfn(x,y,r,g,b,v):fgFn(r,g,b,v);
+      const glowStyle=S.glow>0?`;text-shadow:0 0 ${S.glow*2}px ${color}`:'';
+      html+=`<span style="color:${color};opacity:${S.opacity}${glowStyle}">${esc(ch)}</span>`;
+    }
+    lines.push(line);
+    htmlLines.push(html);
+  }
+
+  lastPlain=lines.join('\n');
+  lastHtml=htmlLines.join('\n');
+
+  const ao=document.getElementById('ao');
+  ao.innerHTML=lastHtml;
+  afs();
+
+  // Background
+  const bgC=S.bg==='cbg'?(S.bgColor||'#000'):(BG_MAP[S.bg]||'#000');
+  document.getElementById('aw').style.background=bgC;
+
+  // Stats
+  document.getElementById('st-c').textContent=cols;
+  document.getElementById('st-r').textContent=rows;
+  document.getElementById('st-ch').textContent=lines.join('').replace(/ /g,'').length.toLocaleString();
+
+  document.getElementById('out-sec').style.display='block';
+  document.getElementById('out-sec').scrollIntoView({behavior:'smooth'});
+}
+
+/* ═══ LUMINANCE ═══ */
+function getLum(r,g,b,mode){
+  switch(mode){
+    case 'lum': return(0.299*r+0.587*g+0.114*b)/255;
+    case 'avg': return(r+g+b)/(3*255);
+    case 'r':   return r/255;
+    case 'g':   return g/255;
+    case 'b':   return b/255;
+    case 'max': return Math.max(r,g,b)/255;
+    case 'min': return Math.min(r,g,b)/255;
+    case 'val': return Math.max(r,g,b)/255; // HSV Value
+    default:    return(0.299*r+0.587*g+0.114*b)/255;
+  }
+}
+
+/* ═══ IMAGE PROCESSING ═══ */
+function bcg(data,bright,contrast,gamma){
+  const d=[...data];
+  const cf=(contrast+100)/100;
+  for(let i=0;i<d.length;i+=4){
+    for(let c=0;c<3;c++){
+      let v=d[i+c]/255;
+      v+=bright/100;
+      v=(v-0.5)*cf+0.5;
+      v=Math.pow(Math.max(0,v),1/gamma);
+      d[i+c]=Math.max(0,Math.min(255,v*255));
+    }
+  }
+  return d;
+}
+
+function sharpen(data,w,h,amt){
+  const d=[...data];
+  const k=amt*0.3;
+  const kern=[0,-k,0,-k,1+4*k,-k,0,-k,0];
+  for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){
+    for(let c=0;c<3;c++){
+      let s=0;
+      for(let ky=-1;ky<=1;ky++)for(let kx=-1;kx<=1;kx++)
+        s+=data[((y+ky)*w+(x+kx))*4+c]*kern[(ky+1)*3+(kx+1)];
+      d[(y*w+x)*4+c]=Math.max(0,Math.min(255,s));
+    }
+  }
+  return d;
+}
+
+function edgeDetect(data,w,h){
+  const d=new Array(data.length).fill(0);
+  for(let i=3;i<d.length;i+=4) d[i]=255;
+  for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){
+    for(let c=0;c<3;c++){
+      const gx=-data[((y-1)*w+(x-1))*4+c]-2*data[(y*w+(x-1))*4+c]-data[((y+1)*w+(x-1))*4+c]
+              +data[((y-1)*w+(x+1))*4+c]+2*data[(y*w+(x+1))*4+c]+data[((y+1)*w+(x+1))*4+c];
+      const gy=-data[((y-1)*w+(x-1))*4+c]-2*data[((y-1)*w+x)*4+c]-data[((y-1)*w+(x+1))*4+c]
+              +data[((y+1)*w+(x-1))*4+c]+2*data[((y+1)*w+x)*4+c]+data[((y+1)*w+(x+1))*4+c];
+      d[(y*w+x)*4+c]=Math.min(255,Math.sqrt(gx*gx+gy*gy));
+    }
+  }
+  return d;
+}
+
+function emboss(data,w,h){
+  const d=new Array(data.length).fill(128);
+  for(let i=3;i<d.length;i+=4) d[i]=255;
+  for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){
+    for(let c=0;c<3;c++){
+      d[(y*w+x)*4+c]=Math.max(0,Math.min(255,128+(data[((y-1)*w+(x-1))*4+c]-data[((y+1)*w+(x+1))*4+c])));
+    }
+  }
+  return d;
+}
+
+function halftone(data,w,h){
+  const d=[...data];
+  const cellSize=3;
+  for(let cy=0;cy<h;cy+=cellSize)for(let cx=0;cx<w;cx+=cellSize){
+    let sum=0,cnt=0;
+    for(let dy=0;dy<cellSize&&cy+dy<h;dy++)for(let dx=0;dx<cellSize&&cx+dx<w;dx++){
+      const i=((cy+dy)*w+(cx+dx))*4;
+      sum+=getLum(data[i],data[i+1],data[i+2],'lum');cnt++;
+    }
+    const avg=sum/cnt;
+    for(let dy=0;dy<cellSize&&cy+dy<h;dy++)for(let dx=0;dx<cellSize&&cx+dx<w;dx++){
+      const dist=Math.sqrt((dx-cellSize/2)**2+(dy-cellSize/2)**2)/(cellSize/2);
+      const i=((cy+dy)*w+(cx+dx))*4;
+      const v=dist<avg?1:0;
+      d[i]=d[i+1]=d[i+2]=v*255;
+    }
+  }
+  return d;
+}
+
+function edgeSample(data,x,y,w,h,lm){
+  if(x<1||y<1||x>=w-1||y>=h-1) return 0;
+  const G=(px,py)=>{const i=(py*w+px)*4;return getLum(data[i],data[i+1],data[i+2],lm)};
+  const gx=-G(x-1,y-1)-2*G(x-1,y)-G(x-1,y+1)+G(x+1,y-1)+2*G(x+1,y)+G(x+1,y+1);
+  const gy=-G(x-1,y-1)-2*G(x,y-1)-G(x+1,y-1)+G(x-1,y+1)+2*G(x,y+1)+G(x+1,y+1);
+  return Math.min(1,Math.sqrt(gx*gx+gy*gy)*4);
+}
+
+/* ═══ DITHERING ═══ */
+function ditherSpread(buf,x,y,w,h,err,mode){
+  const set=(dx,dy,wt)=>{if(x+dx>=0&&x+dx<w&&y+dy<h) buf[(y+dy)*w+(x+dx)]+=err*wt};
+  if(mode==='floyd'){set(1,0,7/16);set(-1,1,3/16);set(0,1,5/16);set(1,1,1/16)}
+  else if(mode==='atkinson'){const e=err/8;set(1,0,e);set(2,0,e);set(-1,1,e);set(0,1,e);set(1,1,e);set(0,2,e)}
+  else if(mode==='stucki'){set(1,0,8/42);set(2,0,4/42);set(-2,1,2/42);set(-1,1,4/42);set(0,1,8/42);set(1,1,4/42);set(2,1,2/42);set(-2,2,1/42);set(-1,2,2/42);set(0,2,4/42);set(1,2,2/42);set(2,2,1/42)}
+  else if(mode==='random'){if(Math.random()<0.5)set(1,0,err*Math.random());if(Math.random()<0.5)set(0,1,err*Math.random())}
+}
+
+/* ═══ GRADIENT ═══ */
+function h2rgb(hex){return[parseInt(hex.slice(1,3),16),parseInt(hex.slice(3,5),16),parseInt(hex.slice(5,7),16)]}
+function lerp(a,b,t){return`rgb(${~~(a[0]+(b[0]-a[0])*t)},${~~(a[1]+(b[1]-a[1])*t)},${~~(a[2]+(b[2]-a[2])*t)})`}
+function mkGrad(cols,rows){
+  const c1=h2rgb(document.getElementById('gc1').value);
+  const c2=h2rgb(document.getElementById('gc2').value);
+  return(x,y,r,g,b,v)=>{
+    if(S.grad==='rainbow') return`hsl(${~~(x/cols*360)},90%,${20+~~(v*55)}%)`;
+    if(S.grad==='fire')    return`hsl(${~~(y/rows*50)},100%,${20+~~(v*60)}%)`;
+    if(S.grad==='ocean')   return`hsl(${200+~~(y/rows*40)},80%,${20+~~(v*55)}%)`;
+    let t=0;
+    if(S.grad==='top')    t=y/rows;
+    if(S.grad==='left')   t=x/cols;
+    if(S.grad==='diag')   t=(x/cols+y/rows)/2;
+    if(S.grad==='radial'){const dx=x/cols-.5,dy=y/rows-.5;t=Math.min(1,Math.sqrt(dx*dx+dy*dy)*2)}
+    return lerp(c1,c2,t);
+  };
+}
+
+/* ═══ ESCAPE HTML ═══ */
+function esc(c){return c==='&'?'&amp;':c==='<'?'&lt;':c==='>'?'&gt;':c}
+
+/* ═══ EXPORTS ═══ */
+function doCopy(){
+  if(!lastPlain) return showToast('Chưa có output!','err');
+  navigator.clipboard.writeText(lastPlain)
+    .then(()=>showToast('ĐÃ SAO CHÉP ✓'))
+    .catch(()=>{const ta=document.createElement('textarea');ta.value=lastPlain;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('ĐÃ SAO CHÉP ✓')});
+}
+
+function doTxt(){
+  if(!lastPlain) return showToast('Chưa có output!','err');
+  dl(URL.createObjectURL(new Blob([lastPlain],{type:'text/plain;charset=utf-8'})),'ascii-art.txt');
+  showToast('ĐÃ TẢI TXT ✓');
+}
+
+function doHtml(){
+  if(!lastHtml) return showToast('Chưa có output!','err');
+  const bgC=S.bg==='cbg'?(S.bgColor||'#000'):(BG_MAP[S.bg]||'#000');
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+body{margin:0;background:${bgC};padding:10px}
+pre{font-family:'Share Tech Mono',monospace;font-size:${S.fs}px;line-height:${S.lh};letter-spacing:${S.ls}px;white-space:pre;${S.bold?'font-weight:bold':''}}</style>
+</head><body><pre>${lastHtml}</pre></body></html>`;
+  dl(URL.createObjectURL(new Blob([html],{type:'text/html'})),'ascii-art.html');
+  showToast('ĐÃ TẢI HTML ✓');
+}
+
+function doPng(){
+  if(!lastPlain) return showToast('Chưa có output!','err');
+  showToast('Đang render PNG...');
+  setTimeout(()=>{
+    const lines=lastPlain.split('\n');
+    const scale=3;
+    const fs=S.fs*scale;
+    const lh=fs*S.lh;
+    const cw=fs*0.6;
+    const c=document.createElement('canvas');
+    c.width=~~(lines[0].length*cw)+20;
+    c.height=~~(lines.length*lh)+20;
+    const ctx=c.getContext('2d');
+    const bgC=S.bg==='cbg'?(S.bgColor||'#000'):(BG_MAP[S.bg]||'#000');
+    if(bgC==='transparent'){ctx.clearRect(0,0,c.width,c.height)}
+    else{ctx.fillStyle=bgC;ctx.fillRect(0,0,c.width,c.height)}
+    ctx.font=`${S.bold?'bold ':''}${fs}px "Share Tech Mono",monospace`;
+    const cv2=document.getElementById('cv');
+    const ctx2=cv2.getContext('2d',{willReadFrequently:true});
+    const fgFn=FG[S.fg]||FG.white;
+    const gfn=mkGrad(S.cols,lines.length);
+    for(let y=0;y<lines.length;y++){
+      for(let x=0;x<lines[y].length;x++){
+        const ch=lines[y][x];if(ch===' ')continue;
+        const px=ctx2.getImageData(x,y,1,1).data;
+        const r=px[0],g=px[1],b=px[2];
+        let v=getLum(r,g,b,S.lm);if(S.inv)v=1-v;
+        ctx.fillStyle=S.grad!=='none'?gfn(x,y,r,g,b,v):fgFn(r,g,b,v);
+        ctx.fillText(ch,10+x*cw,10+(y+1)*lh);
+      }
+    }
+    dl(c.toDataURL('image/png'),'ascii-art.png');
+    showToast('ĐÃ TẢI PNG ✓');
+  },80);
+}
+
+function dl(href,name){const a=document.createElement('a');a.href=href;a.download=name;a.click()}
+
+/* ═══ TOAST ═══ */
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show'+(type==='err'?' err':'');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2300);
+}
+</script>
+</body>
+</html>
